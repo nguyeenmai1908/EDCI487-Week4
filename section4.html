@@ -623,6 +623,24 @@
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
   }, { threshold: 0.08 });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Iframe-aware: when loaded inside combined.html shell
+  if (window.self !== window.top) {
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar) sidebar.style.display = 'none';
+    document.body.style.marginLeft = '0';
+    const pb = document.getElementById('progress-bar');
+    if (pb) pb.style.left = '0';
+    document.querySelectorAll('a[href]').forEach(link => {
+      const href = link.getAttribute('href');
+      if (href && !href.startsWith('http') && !href.startsWith('#') && !href.startsWith('mailto:')) {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          window.parent.postMessage({ navigate: href }, '*');
+        });
+      }
+    });
+  }
 </script>
 </body>
 </html>

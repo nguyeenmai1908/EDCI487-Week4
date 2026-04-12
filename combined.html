@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Week 4: Greenwashing & False Solutions — EDCI 487</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --forest:   #1a2e1a;
+      --moss:     #4a6741;
+      --sage:     #7a9e6e;
+      --clay:     #c4622d;
+      --ember:    #e8874a;
+      --cream:    #f5f0e8;
+      --white:    #fefcf8;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body { font-family: 'DM Sans', sans-serif; font-weight: 300; background: var(--cream); }
+
+    /* -- SIDEBAR -- */
+    .sidebar {
+      position: fixed; top: 0; left: 0;
+      width: 220px; height: 100vh;
+      background: #2f4a2f;
+      border-right: 1px solid rgba(122,158,110,0.2);
+      z-index: 100;
+      display: flex; flex-direction: column;
+      padding: 2rem 0;
+      overflow-y: auto;
+    }
+    .sidebar-logo {
+      font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(122,158,110,0.5);
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid rgba(122,158,110,0.1);
+      margin-bottom: 1.5rem; line-height: 1.6;
+    }
+    .sidebar-nav { display: flex; flex-direction: column; gap: 0; padding: 0; }
+    .nav-item {
+      display: flex; align-items: flex-start; gap: 0.6rem;
+      padding: 0.7rem 1.5rem;
+      border-left: 3px solid transparent;
+      text-decoration: none;
+      transition: background 0.2s ease;
+      cursor: pointer;
+    }
+    .nav-item:hover { background: rgba(245,240,232,0.04); }
+    .nav-item.active { border-left-color: var(--clay); }
+    .nav-num {
+      font-size: 0.68rem; font-weight: 500;
+      color: rgba(245,240,232,0.25);
+      flex-shrink: 0; margin-top: 2px;
+    }
+    .nav-item.active .nav-num { color: var(--clay); }
+    .nav-label {
+      font-size: 0.75rem; font-weight: 300;
+      line-height: 1.4;
+      color: rgba(245,240,232,0.35);
+    }
+    .nav-item.active .nav-label { color: var(--cream); font-weight: 500; }
+
+    /* -- CONTENT FRAME -- */
+    #content-frame {
+      position: fixed;
+      top: 0;
+      left: 220px;
+      width: calc(100% - 220px);
+      height: 100vh;
+      border: none;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      #content-frame { left: 0; width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<aside class="sidebar" aria-label="Course outline">
+  <div class="sidebar-logo">EDCI 487<br>Climate Change Education<br>Week 4</div>
+  <nav class="sidebar-nav">
+    <a class="nav-item active" data-page="index.html">
+      <span class="nav-num">&uarr;</span>
+      <span class="nav-label">Intro &amp; Overview</span>
+    </a>
+    <a class="nav-item" data-page="section1.html">
+      <span class="nav-num">01</span>
+      <span class="nav-label">Can You Spot It?</span>
+    </a>
+    <a class="nav-item" data-page="section2.html">
+      <span class="nav-num">02</span>
+      <span class="nav-label">What Is Greenwashing?</span>
+    </a>
+    <a class="nav-item" data-page="section3.html">
+      <span class="nav-num">03</span>
+      <span class="nav-label">Three Decisions</span>
+    </a>
+    <a class="nav-item" data-page="section4.html">
+      <span class="nav-num">04</span>
+      <span class="nav-label">Carbon Colonialism</span>
+    </a>
+    <a class="nav-item" data-page="section5.html">
+      <span class="nav-num">05</span>
+      <span class="nav-label">Your Classroom</span>
+    </a>
+  </nav>
+</aside>
+
+<iframe id="content-frame" src="index.html"></iframe>
+
+<script>
+  const navItems = document.querySelectorAll('.nav-item');
+  const frame = document.getElementById('content-frame');
+
+  function navigateTo(page) {
+    frame.src = page;
+    navItems.forEach(item => {
+      item.classList.toggle('active', item.dataset.page === page);
+    });
+  }
+
+  // Sidebar nav clicks
+  navItems.forEach(item => {
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      navigateTo(item.dataset.page);
+    });
+  });
+
+  // Listen for navigation messages from iframe content
+  window.addEventListener('message', (e) => {
+    if (e.data && e.data.navigate) {
+      navigateTo(e.data.navigate);
+    }
+  });
+</script>
+</body>
+</html>

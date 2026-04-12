@@ -760,5 +760,24 @@
 </section>
 
 </main>
+
+<script>
+  // Iframe-aware: when loaded inside combined.html shell
+  if (window.self !== window.top) {
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar) sidebar.style.display = 'none';
+    document.querySelector('.page-layout').style.marginLeft = '0';
+    // Intercept all internal navigation links
+    document.querySelectorAll('a[href]').forEach(link => {
+      const href = link.getAttribute('href');
+      if (href && !href.startsWith('http') && !href.startsWith('#') && !href.startsWith('mailto:')) {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          window.parent.postMessage({ navigate: href }, '*');
+        });
+      }
+    });
+  }
+</script>
 </body>
 </html>
