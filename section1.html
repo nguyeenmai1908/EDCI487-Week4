@@ -1,0 +1,488 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Section 1: Can You Spot It? â€” EDCI 487 Week 4</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --forest:    #1a2e1a;
+      --near-black:#1c1a14;
+      --moss:      #4a6741;
+      --sage:      #7a9e6e;
+      --sage-pale: #deebd4;
+      --clay:      #c4622d;
+      --ember:     #e8874a;
+      --sand:      #e8d5b0;
+      --cream:     #f5f0e8;
+      --white:     #fefcf8;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      background: var(--cream);
+      color: var(--near-black);
+      margin-left: 220px;
+      min-height: 100vh;
+    }
+
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 9999; opacity: 0.035;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+    }
+
+    #progress-bar {
+      position: fixed; top: 0; left: 220px; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--clay), var(--ember));
+      transform-origin: left; transform: scaleX(0);
+      transition: transform 0.1s linear; z-index: 1000;
+    }
+
+    /* â”€â”€ SIDEBAR â”€â”€ */
+    .sidebar {
+      position: fixed; top: 0; left: 0;
+      width: 220px; height: 100vh;
+      background: #2f4a2f;
+      border-right: 1px solid rgba(122,158,110,0.2);
+      z-index: 100;
+      display: flex; flex-direction: column;
+      padding: 2rem 0; overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase;
+      color: rgba(122,158,110,0.5);
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid rgba(122,158,110,0.1);
+      margin-bottom: 1.5rem; line-height: 1.6;
+    }
+
+    .sidebar-nav { display: flex; flex-direction: column; gap: 0; padding: 0; }
+
+    .nav-item {
+      display: flex; align-items: flex-start; gap: 0.6rem;
+      padding: 0.7rem 1.5rem;
+      border-left: 3px solid transparent;
+      text-decoration: none;
+      transition: background 0.2s ease;
+    }
+    .nav-item:hover { background: rgba(245,240,232,0.04); }
+    .nav-item.active { border-left-color: var(--clay); }
+
+    .nav-num { font-size: 0.68rem; font-weight: 500; color: rgba(245,240,232,0.25); flex-shrink: 0; margin-top: 2px; }
+    .nav-item.active .nav-num { color: var(--clay); }
+    .nav-label { font-size: 0.75rem; font-weight: 300; line-height: 1.4; color: rgba(245,240,232,0.35); }
+    .nav-item.active .nav-label { color: var(--cream); font-weight: 500; }
+
+    /* â”€â”€ SECTION HEADER â”€â”€ */
+    .block-inner {
+      width: min(1080px, 100%);
+      margin: 0 auto;
+    }
+
+    .section-header {
+      background: var(--forest);
+      padding: 2.5rem 3rem;
+    }
+
+    .section-header-row {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      text-align: left;
+    }
+
+    .sh-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 10rem; font-weight: 900;
+      color: rgba(255,255,255,0.2);
+      line-height: 1; flex-shrink: 0; user-select: none;
+    }
+    .sh-center { flex: 1; }
+    .sh-label {
+      font-size: 1rem; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--clay); margin-bottom: 0.35rem;
+    }
+    .sh-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.8rem; font-weight: 700;
+      color: var(--cream); line-height: 1.25;
+    }
+    .sh-time {
+      font-size: 0.78rem; letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(245,240,232,0.28);
+      flex-shrink: 0; align-self: center;
+    }
+
+    /* â”€â”€ CONTENT â”€â”€ */
+    .content-block {
+      background: var(--white);
+      padding: 3.5rem 3rem 2.5rem;
+      text-align: left;
+    }
+    .content-block .block-inner {
+      width: min(1080px, 100%);
+      margin: 0 auto;
+      text-align: left;
+    }
+    .content-block p {
+      font-size: 1rem;
+      line-height: 1.9;
+      color: rgba(26,46,26,0.75);
+      margin-bottom: 0.5rem;
+    }
+    .content-block .intro-lead {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 300;
+      line-height: 1.8;
+      color: rgba(26,46,26,0.75);
+      margin-bottom: 0.9rem;
+    }
+    .content-block .source-credit {
+      font-size: 1rem;
+      font-style: italic;
+      line-height: 1.8;
+      color: rgba(26,46,26,0.88);
+      margin-top: 1rem;
+    }
+    .content-block p:last-child { margin-bottom: 0; }
+    .content-block strong { font-weight: 700; }
+
+    /* â”€â”€ SCENARIO CARDS â”€â”€ */
+    .scenario-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 2.5rem;
+      padding: 3rem 0;
+      background: var(--cream);
+      text-align: left;
+    }
+
+    .scenario-card {
+      background: var(--white);
+      border: 1px solid rgba(74,103,65,0.15);
+      overflow: hidden;
+      border-radius: 18px;
+    }
+
+    .scenario-ad {
+      background: var(--forest);
+      padding: 1.75rem 2rem;
+      display: flex; gap: 1rem; align-items: flex-start;
+    }
+    .scenario-ad-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 0.1rem; }
+    .scenario-ad-text { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1rem; color: var(--cream); line-height: 1.55; }
+    .scenario-ad-source { font-family: 'DM Sans', sans-serif; font-style: normal; font-size: 0.72rem; font-weight: 300; color: var(--sage); margin-top: 0.4rem; }
+
+    .scenario-body { padding: 1.75rem 2rem; }
+    .scenario-prompt { font-size: 0.78rem; font-weight: 500; letter-spacing: 0.05em; color: var(--moss); text-transform: uppercase; margin-bottom: 1rem; }
+
+    .radio-group { display: flex; flex-direction: column; gap: 0.55rem; margin-bottom: 1.25rem; }
+    .radio-option {
+      display: flex; align-items: center; gap: 0.75rem;
+      cursor: pointer; padding: 0.6rem 0.85rem;
+      border: 1px solid rgba(74,103,65,0.2);
+      transition: background 0.15s, border-color 0.15s;
+      user-select: none;
+      border-radius: 12px;
+    }
+    .radio-option:hover { background: var(--sage-pale); border-color: var(--sage); }
+    .radio-option input[type="radio"] { accent-color: var(--clay); width: 14px; height: 14px; flex-shrink: 0; }
+    .radio-option label { font-size: 0.875rem; cursor: pointer; color: var(--near-black); font-weight: 300; }
+
+    .reveal-btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-family: 'DM Sans', sans-serif; font-size: 0.8rem; font-weight: 500;
+      color: var(--white); background: var(--clay);
+      border: none; padding: 0.6rem 1.25rem;
+      cursor: pointer; transition: background 0.2s;
+      border-radius: 12px;
+    }
+    .reveal-btn:hover { background: var(--ember); }
+
+    .reveal-panel {
+      display: none;
+      margin-top: 1.25rem; padding: 1.25rem 1.5rem;
+      background: var(--sage-pale);
+      border-left: 3px solid var(--sage);
+      border-radius: 12px;
+    }
+    .reveal-panel.open { display: block; }
+    .reveal-label { font-size: 0.65rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--moss); margin-bottom: 0.6rem; }
+    .reveal-panel p { font-size: 0.875rem; line-height: 1.75; color: var(--near-black); margin: 0; }
+
+    /* â”€â”€ TRANSITION â”€â”€ */
+    .transition-card { background: var(--forest); padding: 2.5rem 4rem; }
+    .transition-card .block-inner { display: flex; align-items: center; gap: 1.5rem; }
+    .transition-card-line { width: 3px; height: 56px; background: linear-gradient(to bottom, var(--clay), var(--ember)); flex-shrink: 0; border-radius: 2px; }
+    .transition-card p { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1rem; color: var(--sand); line-height: 1.6; margin: 0; }
+
+    /* â”€â”€ CONTINUE BAR â”€â”€ */
+    .continue-bar { background: var(--forest); padding: 1.5rem 4rem; }
+    .continue-bar .block-inner { display: flex; align-items: center; justify-content: space-between; gap: 2rem; }
+    .continue-bar-text { font-family: 'Playfair Display', serif; font-style: italic; font-size: 0.9rem; color: var(--sage); }
+    .continue-btn { display: inline-flex; align-items: center; gap: 0.5rem; font-family: 'DM Sans', sans-serif; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.05em; color: var(--white); background: var(--clay); border: none; padding: 0.75rem 1.75rem; cursor: pointer; text-decoration: none; transition: background 0.2s; white-space: nowrap; }
+    .continue-btn:hover { background: var(--ember); }
+    .begin-section { background: var(--moss); padding: 5rem 4rem; position: relative; overflow: hidden; }
+    .begin-section .block-inner { display: flex; justify-content: space-between; align-items: center; gap: 3rem; position: relative; z-index: 1; }
+    .begin-section::after { content: ''; position: absolute; right: -100px; top: -100px; width: 400px; height: 400px; border-radius: 50%; background: rgba(26,46,26,0.3); pointer-events: none; }
+    .begin-heading { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 700; color: var(--white); margin-bottom: 0.75rem; line-height: 1.2; }
+    .begin-sub { font-size: 1rem; line-height: 1.7; color: rgba(254,252,248,0.7); max-width: 520px; }
+    .begin-action { display: flex; flex-direction: column; align-items: flex-end; gap: 1rem; flex-shrink: 0; }
+    .btn-begin { display: inline-flex; align-items: center; gap: 0.75rem; background: var(--clay); color: var(--white); border-radius: 12px; text-decoration: none; padding: 1.1rem 2.5rem; font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 500; font-family: 'DM Sans', sans-serif; transition: background 0.25s ease, transform 0.25s ease; }
+    .btn-begin:hover { background: var(--ember); transform: translateX(4px); }
+    .btn-begin .arrow { width: 20px; height: 1px; background: currentColor; position: relative; transition: width 0.25s ease; }
+    .btn-begin:hover .arrow { width: 28px; }
+    .btn-begin .arrow::after { content: ''; position: absolute; right: 0; top: -3px; width: 7px; height: 7px; border-right: 1px solid currentColor; border-top: 1px solid currentColor; transform: rotate(45deg); }
+    .time-note { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(254,252,248,0.45); }
+    .transition-card, .continue-bar { display: none; }
+    /* back link */
+    .back-link { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.75rem; color: var(--sage); text-decoration: none; padding: 1.25rem 4rem; background: var(--forest); width: 100%; transition: color 0.2s; }
+    .back-link:hover { color: var(--cream); }
+
+    /* â”€â”€ SCROLL REVEAL â”€â”€ */
+    .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.5s ease, transform 0.5s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal[data-delay="1"] { transition-delay: 0.05s; }
+    .reveal[data-delay="2"] { transition-delay: 0.18s; }
+    .reveal[data-delay="3"] { transition-delay: 0.31s; }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" aria-label="Course outline">
+  <div class="sidebar-logo">EDCI 487<br>Climate Change Education<br>Week 4</div>
+  <nav class="sidebar-nav">
+    <a class="nav-item" href="index.html">
+      <span class="nav-num">↑</span>
+      <span class="nav-label">Intro &amp; Overview</span>
+    </a>
+    <a class="nav-item active" href="section1.html">
+      <span class="nav-num">01</span>
+      <span class="nav-label">Can You Spot It?</span>
+    </a>
+    <a class="nav-item" href="section2.html">
+      <span class="nav-num">02</span>
+      <span class="nav-label">What Is Greenwashing?</span>
+    </a>
+    <a class="nav-item" href="section3.html">
+      <span class="nav-num">03</span>
+      <span class="nav-label">Three Decisions</span>
+    </a>
+    <a class="nav-item" href="section4.html">
+      <span class="nav-num">04</span>
+      <span class="nav-label">Carbon Colonialism</span>
+    </a>
+    <a class="nav-item" href="section5.html">
+      <span class="nav-num">05</span>
+      <span class="nav-label">Your Classroom</span>
+    </a>
+  </nav>
+</aside>
+
+<!-- SECTION HEADER -->
+<section class="section-header">
+  <div class="block-inner section-header-row">
+    <div class="sh-number">01</div>
+    <div class="sh-center">
+      <div class="sh-label">Section 1 of 5</div>
+      <div class="sh-title reveal">Can You Spot It?</div>
+    </div>
+    <div class="sh-time reveal">~4 minutes</div>
+  </div>
+</section>
+
+<!-- INTRO TEXT -->
+<section class="content-block reveal">
+  <div class="block-inner">
+    <p class="intro-lead">Before we define anything, let's see what you already notice.</p>
+    <p>
+      Below are three claims from companies and institutions. Read each one carefully.
+      <strong>Which ones feel like genuine climate action — and which ones feel off to you?</strong>
+    </p>
+    <p class="source-credit">
+      These are fictional scenarios based on real documented cases. The tactics are real.
+      Select your instinct, then reveal the analysis.
+    </p>
+  </div>
+</section>
+
+<!-- SCENARIO CARDS -->
+<div class="block-inner">
+<div class="scenario-grid">
+
+  <!-- Card 1: sounds legitimate, actually greenwashing -->
+  <div class="scenario-card reveal">
+    <div class="scenario-ad">
+      <div class="scenario-ad-icon">&#9992;&#65039;</div>
+      <div>
+        <div class="scenario-ad-text">
+          "FlyNorth Airlines is proud to be carbon neutral. Every ticket you purchase automatically offsets your flight's emissions through our certified reforestation programme in the Amazon."
+        </div>
+        <div class="scenario-ad-source">– FlyNorth Airlines website, 2023</div>
+      </div>
+    </div>
+    <div class="scenario-body">
+      <div class="scenario-prompt">What's your read?</div>
+      <div class="radio-group">
+        <label class="radio-option"><input type="radio" name="s1" /> <label>Genuine climate action</label></label>
+        <label class="radio-option"><input type="radio" name="s1" /> <label>Possibly misleading</label></label>
+        <label class="radio-option"><input type="radio" name="s1" /> <label>Not sure yet</label></label>
+      </div>
+      <button class="reveal-btn" onclick="revealPanel('p1', this)">Reveal analysis →</button>
+      <div class="reveal-panel" id="p1">
+        <div class="reveal-label">The net-zero mirage</div>
+        <p>
+          "Certified" sounds reassuring – but certification standards for carbon offsets vary 
+          wildly, and reforestation projects in particular have been repeatedly found to overstate 
+          their impact. Investigations into similar real-world programmes found offsets overstating 
+          reductions by up to 90%. The emissions from each flight still entered the atmosphere. 
+          A confident claim with a vague credential behind it is the net-zero mirage in action – 
+          and it's one of the most common patterns in airline and corporate marketing.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: sounds like greenwashing, actually legitimate -->
+  <div class="scenario-card reveal" data-delay="1">
+    <div class="scenario-ad">
+      <div class="scenario-ad-icon">&#129525;</div>
+      <div>
+        <div class="scenario-ad-text">
+          "Don't buy this jacket." – A full-page newspaper ad from FieldWork Outdoor Co., alongside a breakdown of the exact environmental cost of producing one jacket: water used, emissions generated, waste created.
+        </div>
+        <div class="scenario-ad-source">– FieldWork Outdoor Co. newspaper campaign</div>
+      </div>
+    </div>
+    <div class="scenario-body">
+      <div class="scenario-prompt">What's your read?</div>
+      <div class="radio-group">
+        <label class="radio-option"><input type="radio" name="s2" /> <label>Genuine climate action</label></label>
+        <label class="radio-option"><input type="radio" name="s2" /> <label>Possibly misleading</label></label>
+        <label class="radio-option"><input type="radio" name="s2" /> <label>Not sure yet</label></label>
+      </div>
+      <button class="reveal-btn" onclick="revealPanel('p2', this)">Reveal analysis →</button>
+      <div class="reveal-panel" id="p2">
+        <div class="reveal-label">Skepticism needs evidence, not just instinct</div>
+        <p>
+          This looks like a cynical stunt – a clothing company telling you not to buy things. 
+          But the ad was paired with a documented repair-and-resell programme, a published 
+          supply chain emissions audit, and independently verified targets to reduce production 
+          volume. Skepticism is healthy, but applying it equally to genuine efforts and bad ones 
+          means you can't tell them apart. The question isn't <em>does this sound suspicious</em> – 
+          it's <em>what does the evidence actually show?</em>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 3: government policy, genuinely ambiguous -->
+  <div class="scenario-card reveal" data-delay="2">
+    <div class="scenario-ad">
+      <div class="scenario-ad-icon">&#127963;&#65039;</div>
+      <div>
+        <div class="scenario-ad-text">
+          "The Province of Westara has reduced its industrial carbon emissions by 30% since 2005 – proof that economic growth and environmental responsibility can go hand in hand."
+        </div>
+        <div class="scenario-ad-source">– Westara provincial government press release, 2023</div>
+      </div>
+    </div>
+    <div class="scenario-body">
+      <div class="scenario-prompt">What's your read?</div>
+      <div class="radio-group">
+        <label class="radio-option"><input type="radio" name="s3" /> <label>Genuine climate action</label></label>
+        <label class="radio-option"><input type="radio" name="s3" /> <label>Possibly misleading</label></label>
+        <label class="radio-option"><input type="radio" name="s3" /> <label>Not sure yet</label></label>
+      </div>
+      <button class="reveal-btn" onclick="revealPanel('p3', this)">Reveal analysis →</button>
+      <div class="reveal-panel" id="p3">
+        <div class="reveal-label">A rate or a total?</div>
+        <p>
+          The 30% figure may be accurate – but it likely measures emissions <em>intensity</em> 
+          (emissions per unit of economic output), not total emissions. A region can cut its 
+          intensity while its absolute emissions rise, simply by growing its economy faster than 
+          its pollution. Governments and policy documents use intensity figures regularly because 
+          they tell a more favourable story. For teacher candidates, this matters beyond climate: 
+          knowing to ask <em>"is this a rate or a total?"</em> is a transferable critical literacy 
+          skill your students will use across subjects for the rest of their lives.
+        </p>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<div class="transition-card reveal">
+  <div class="block-inner">
+    <div class="transition-card-line"></div>
+    <p>
+      Your instincts are already working. Now let's build the vocabulary to name exactly
+      what's happening â€” and why it matters for the classrooms you'll be teaching in.
+    </p>
+  </div>
+</div>
+
+<div class="continue-bar">
+  <div class="block-inner">
+    <span class="continue-bar-text">Next: Naming what we're seeing</span>
+    <a href="section2.html" class="continue-btn">Section 2 â€” What Is Greenwashing? â†’</a>
+  </div>
+</div>
+
+
+<section class="begin-section reveal">
+  <div class="block-inner">
+    <div class="begin-text">
+      <h2 class="begin-heading">Ready to continue?</h2>
+      <p class="begin-sub">
+        Your instincts are already working. Now let's build the vocabulary to name exactly
+        what's happening â€” and why it matters for the classrooms you'll be teaching in.
+      </p>
+    </div>
+    <div class="begin-action">
+      <a class="btn-begin" href="section2.html">
+        Section 2 <span class="arrow"></span>
+      </a>
+      <span class="time-note">Next: What Is Greenwashing?</span>
+    </div>
+  </div>
+</section>
+<script>
+  window.addEventListener('scroll', () => {
+    const doc = document.documentElement;
+    const scrolled = doc.scrollTop / (doc.scrollHeight - doc.clientHeight);
+    document.getElementById('progress-bar').style.transform = `scaleX(${scrolled})`;
+  });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  function revealPanel(id, btn) {
+    const panel = document.getElementById(id);
+    panel.classList.toggle('open');
+    btn.textContent = panel.classList.contains('open') ? 'Hide analysis ↑' : 'Reveal analysis →';
+  }
+</script>
+</body>
+</html>
+
+
+

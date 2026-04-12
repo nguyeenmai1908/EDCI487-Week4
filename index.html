@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Week 4: Greenwashing & False Solutions — EDCI 487</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --forest:   #1a2e1a;
+      --earth:    #3d2b1f;
+      --moss:     #4a6741;
+      --sage:     #7a9e6e;
+      --clay:     #c4622d;
+      --sand:     #e8d5b0;
+      --cream:    #f5f0e8;
+      --ember:    #e8874a;
+      --white:    #fefcf8;
+      --sage-pale:#deebd4;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--forest);
+      color: var(--cream);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ── GRAIN ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 100;
+      opacity: 0.6;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      position: fixed;
+      top: 0; left: 0;
+      width: 220px; height: 100vh;
+      background: #2f4a2f;
+      border-right: 1px solid rgba(122,158,110,0.2);
+      z-index: 100;
+      display: flex; flex-direction: column;
+      padding: 2rem 0;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      font-size: 0.68rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(122,158,110,0.5);
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid rgba(122,158,110,0.1);
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
+    }
+
+    .sidebar-nav {
+      display: flex; flex-direction: column;
+      gap: 0; padding: 0;
+    }
+
+    .nav-item {
+      display: flex; align-items: flex-start;
+      gap: 0.6rem;
+      padding: 0.7rem 1.5rem;
+      border-left: 3px solid transparent;
+      text-decoration: none;
+      transition: background 0.2s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover { background: rgba(245,240,232,0.04); }
+    .nav-item.active { border-left-color: var(--clay); }
+
+    .nav-num {
+      font-size: 0.68rem; font-weight: 500;
+      color: rgba(245,240,232,0.25);
+      flex-shrink: 0; margin-top: 2px;
+    }
+
+    .nav-item.active .nav-num { color: var(--clay); }
+
+    .nav-label {
+      font-size: 0.75rem; font-weight: 300;
+      line-height: 1.4;
+      color: rgba(245,240,232,0.35);
+    }
+
+    .nav-item.active .nav-label { color: var(--cream); font-weight: 500; }
+
+    /* ── PAGE LAYOUT ── */
+    .page-layout { margin-left: 220px; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg { position: absolute; inset: 0; overflow: hidden; }
+
+    .ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(122,158,110,0.12);
+      animation: expandRing 8s ease-out infinite;
+    }
+    .ring:nth-child(1) { width: 300px; height: 300px; top: 10%; left: 60%; animation-delay: 0s; }
+    .ring:nth-child(2) { width: 500px; height: 500px; top:  5%; left: 55%; animation-delay: 1.5s; }
+    .ring:nth-child(3) { width: 700px; height: 700px; top: -2%; left: 50%; animation-delay: 3s; }
+    .ring:nth-child(4) { width: 900px; height: 900px; top: -8%; left: 45%; animation-delay: 4.5s; }
+
+    @keyframes expandRing {
+      0%   { opacity: 0; transform: scale(0.8); }
+      20%  { opacity: 1; }
+      100% { opacity: 0; transform: scale(1.2); }
+    }
+
+    .hero-slash {
+      position: absolute;
+      top: 0; right: 0;
+      width: 45%; height: 100%;
+      background: linear-gradient(135deg, transparent 40%, rgba(74,103,65,0.15) 40%);
+      pointer-events: none;
+    }
+
+    /* top nav bar */
+    .topnav {
+      position: relative; z-index: 10;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 2rem 3.5rem;
+      border-bottom: 1px solid rgba(122,158,110,0.2);
+      animation: fadeDown 0.8s ease both;
+    }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .topnav-course { font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--sage); }
+    .topnav-week { display: flex; align-items: center; gap: 1rem; font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(232,213,176,0.5); }
+    .topnav-week span { display: inline-block; width: 28px; height: 1px; background: var(--clay); }
+
+    /* hero content */
+    .hero-content {
+      position: relative; z-index: 10;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 4rem 3.5rem 2rem;
+      max-width: 900px;
+    }
+
+    .week-label {
+      font-size: 1rem; letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--clay); margin-bottom: 1.5rem;
+      opacity: 0; animation: fadeUp 0.8s ease 0.3s both;
+    }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3rem, 7vw, 6.5rem);
+      font-weight: 900; line-height: 0.95;
+      letter-spacing: -0.02em; margin-bottom: 0.3em;
+      opacity: 0; animation: fadeUp 0.9s ease 0.5s both;
+    }
+
+    .hero-title .line-1 { color: var(--white); display: block; }
+    .hero-title .line-2 {
+      color: transparent;
+      -webkit-text-stroke: 1.5px var(--sage);
+      display: block;
+    }
+
+    .hero-subtitle {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+      color: var(--ember);
+      margin-top: 1rem;
+      opacity: 0; animation: fadeUp 0.9s ease 0.7s both;
+    }
+
+    .hero-desc {
+      margin-top: 2rem;
+      max-width: 520px;
+      font-size: 1rem; line-height: 1.75;
+      color: rgba(232,213,176,0.75);
+      opacity: 0; animation: fadeUp 0.9s ease 0.9s both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* hero stats */
+    .hero-stats {
+      position: relative; z-index: 10;
+      display: flex;
+      border-top: 1px solid rgba(122,158,110,0.2);
+      opacity: 0; animation: fadeUp 0.9s ease 1.1s both;
+    }
+
+    .stat {
+      flex: 1;
+      padding: 2rem 3.5rem;
+      border-right: 1px solid rgba(122,158,110,0.15);
+    }
+    .stat:last-child { border-right: none; }
+
+    .stat-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--ember);
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+      font-size: 0.72rem; letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(122,158,110,0.7);
+      line-height: 1.45;
+      overflow-wrap: anywhere;
+    }
+
+    /* ── OVERVIEW ── */
+    .overview {
+      background: var(--cream);
+      color: var(--forest);
+      padding: 6rem 3.5rem;
+      position: relative;
+      overflow: hidden;
+      border-top: 1px solid rgba(122,158,110,0.15);
+    }
+
+    .overview::before {
+      content: '"';
+      font-family: 'Playfair Display', serif;
+      font-size: 28rem;
+      color: rgba(26,46,26,0.04);
+      position: absolute;
+      top: -4rem;
+      left: -2rem;
+      line-height: 1;
+      pointer-events: none;
+      font-weight: 900;
+    }
+
+    .overview-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1.6fr;
+      gap: 6rem;
+      align-items: start;
+    }
+
+    .section-label {
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--clay);
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-label::after {
+      content: '';
+      display: block;
+      height: 1px;
+      width: 32px;
+      background: var(--clay);
+    }
+
+    .overview-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      font-weight: 700;
+      line-height: 1.15;
+      color: var(--forest);
+      margin-bottom: 1.5rem;
+    }
+
+    .concepts .section-label {
+      font-size: 1rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--clay);
+    }
+
+    .overview-quote {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.1rem;
+      line-height: 1.7;
+      color: var(--moss);
+      padding-left: 1.5rem;
+      border-left: 3px solid var(--clay);
+      margin-top: 2rem;
+    }
+
+    .overview-body {
+      font-size: 1.05rem;
+      line-height: 1.85;
+      color: rgba(26,46,26,0.75);
+      margin-bottom: 2rem;
+    }
+
+    /* outcomes grid */
+    .outcomes-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: rgba(26,46,26,0.1);
+      border: 1px solid rgba(26,46,26,0.1);
+      margin-top: 3rem;
+    }
+
+    .outcome-card {
+      background: var(--white);
+      padding: 1.75rem;
+      position: relative;
+      transition: background 0.25s ease;
+    }
+
+    .outcome-card:hover { background: var(--sand); }
+
+    .outcome-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: rgba(26,46,26,0.08);
+      position: absolute;
+      top: 1rem;
+      right: 1.5rem;
+      line-height: 1;
+    }
+
+    .outcome-icon {
+      font-size: 1.4rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .outcome-title {
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 500;
+      color: var(--clay);
+      margin-bottom: 0.5rem;
+    }
+
+    .outcome-body {
+      font-size: 0.9rem;
+      line-height: 1.65;
+      color: rgba(26,46,26,0.7);
+    }
+
+    /* ── CONCEPTS ── */
+    .concepts {
+      background: var(--sand);
+      padding: 6rem 3.5rem;
+      border-top: 1px solid rgba(122,158,110,0.18);
+    }
+
+    .concepts-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .concepts-header {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 3rem;
+    }
+
+    .concepts-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.4rem, 2.5vw, 2rem);
+      font-weight: 700; color: #000;
+      margin-top: 0.5rem;
+    }
+
+    .concepts-count {
+      font-size: 0.7rem; letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(28,26,20,0.55);
+    }
+
+    .concepts-list {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: rgba(122,158,110,0.18);
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    .concept-item {
+      background: rgba(254,252,248,0.55);
+      padding: 2.5rem 2rem;
+      transition: background 0.2s;
+      text-align: left;
+    }
+
+    .concept-item:hover { background: rgba(254,252,248,0.82); }
+
+    .concept-tag {
+      font-size: 0.62rem; font-weight: 500;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--clay); margin-bottom: 1rem;
+    }
+
+    .concept-name {
+      font-family: 'Playfair Display', serif;
+      font-style: normal; font-size: 1.2rem;
+      font-weight: 700;
+      color: #000; margin-bottom: 1rem;
+      line-height: 1.3;
+    }
+
+    .concept-def {
+      font-size: 0.85rem; line-height: 1.7;
+      color: rgba(28,26,20,0.74);
+    }
+
+    /* ── BEGIN CTA ── */
+    .begin-section {
+      background: var(--moss);
+      padding: 5rem 3.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 3rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .begin-section::after {
+      content: '';
+      position: absolute;
+      right: -100px;
+      top: -100px;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: rgba(26,46,26,0.3);
+      pointer-events: none;
+    }
+
+    .begin-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 700; color: var(--white);
+      margin-bottom: 0.75rem;
+      line-height: 1.2;
+    }
+
+    .begin-sub {
+      font-size: 1rem; line-height: 1.7;
+      color: rgba(254,252,248,0.7);
+      max-width: 480px;
+    }
+
+    .begin-action {
+      display: flex; flex-direction: column;
+      align-items: flex-end; gap: 1rem;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .btn-begin {
+      display: inline-flex; align-items: center; gap: 0.75rem;
+      background: var(--clay);
+      color: var(--white);
+      border-radius: 12px;
+      text-decoration: none;
+      padding: 1.1rem 2.5rem;
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 500;
+      font-family: 'DM Sans', sans-serif;
+      transition: background 0.25s ease, transform 0.25s ease;
+    }
+
+    .btn-begin:hover { background: var(--ember); transform: translateX(4px); }
+
+    .btn-begin .arrow {
+      width: 20px; height: 1px;
+      background: currentColor;
+      position: relative;
+      transition: width 0.25s ease;
+    }
+    .btn-begin:hover .arrow { width: 28px; }
+    .btn-begin .arrow::after {
+      content: '';
+      position: absolute;
+      right: 0; top: -3px;
+      width: 7px; height: 7px;
+      border-right: 1px solid currentColor;
+      border-top: 1px solid currentColor;
+      transform: rotate(45deg);
+    }
+
+    .time-note {
+      font-size: 0.72rem; letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(254,252,248,0.45);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .page-layout { margin-left: 0; }
+      .topnav, .hero-content, .overview, .overview-inner,
+      .concepts, .begin-section { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .hero-stats { flex-wrap: nowrap; }
+      .stat {
+        flex: 1 1 25%;
+        min-width: 0;
+        padding: 1.25rem 1.5rem;
+      }
+      .overview-inner { grid-template-columns: 1fr; gap: 3rem; }
+      .concepts-list { grid-template-columns: 1fr; }
+      .outcomes-grid { grid-template-columns: 1fr; }
+      .begin-section { flex-direction: column; align-items: flex-start; }
+      .begin-action { align-items: flex-start; }
+      .concepts-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+    }
+
+    @media (max-width: 520px) {
+      .stat {
+        flex-basis: 25%;
+        border-right: 1px solid rgba(122,158,110,0.15);
+        border-bottom: none;
+      }
+      .stat:last-child { border-right: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" aria-label="Course outline">
+  <div class="sidebar-logo">EDCI 487<br>Climate Change Education<br>Week 4</div>
+  <nav class="sidebar-nav">
+    <a class="nav-item active" href="index.html">
+      <span class="nav-num">↑</span>
+      <span class="nav-label">Intro &amp; Overview</span>
+    </a>
+    <a class="nav-item" href="section1.html">
+      <span class="nav-num">01</span>
+      <span class="nav-label">Can You Spot It?</span>
+    </a>
+    <a class="nav-item" href="section2.html">
+      <span class="nav-num">02</span>
+      <span class="nav-label">What Is Greenwashing?</span>
+    </a>
+    <a class="nav-item" href="section3.html">
+      <span class="nav-num">03</span>
+      <span class="nav-label">Three Decisions</span>
+    </a>
+    <a class="nav-item" href="section4.html">
+      <span class="nav-num">04</span>
+      <span class="nav-label">Carbon Colonialism</span>
+    </a>
+    <a class="nav-item" href="section5.html">
+      <span class="nav-num">05</span>
+      <span class="nav-label">Your Classroom</span>
+    </a>
+  </nav>
+</aside>
+
+<main class="page-layout">
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <div class="ring"></div>
+    <div class="ring"></div>
+    <div class="ring"></div>
+    <div class="ring"></div>
+  </div>
+  <div class="hero-slash"></div>
+
+  <div class="topnav">
+    <div class="topnav-course">EDCI 487 · Climate Change Education</div>
+    <div class="topnav-week"><span></span> Week 4 of 12</div>
+  </div>
+
+  <div class="hero-content">
+    <div class="week-label">Week 4 · Pre-Class Module</div>
+    <h1 class="hero-title">
+      <span class="line-1">Green</span>
+      <span class="line-2">Washing</span>
+    </h1>
+    <p class="hero-subtitle">When performance replaces action</p>
+    <p class="hero-desc">
+      In 2023, Delta called itself the world's first carbon-neutral airline. H&amp;M launched 
+      a "Conscious Collection." Innocent Drinks ran cartoon ads about fixing the planet — 
+      while owned by Coca-Cola, the world's largest plastic polluter. These weren't fringe 
+      claims. They came from some of the most recognized brands on Earth. And they were all 
+      found to be misleading.
+    </p>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-number">35</div>
+      <div class="stat-label">Minutes estimated</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">6</div>
+      <div class="stat-label">Greenwashing tactics</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">3</div>
+      <div class="stat-label">Teaching scenarios</div>
+    </div>
+    <div class="stat">
+      <div class="stat-number">1</div>
+      <div class="stat-label">Reflection activity</div>
+    </div>
+  </div>
+
+</section>
+
+<!-- OVERVIEW -->
+<section class="overview">
+  <div class="overview-inner">
+    <div class="overview-left">
+      <div class="section-label">Module Overview</div>
+      <h2 class="overview-heading">Seeing through the performance</h2>
+      <blockquote class="overview-quote">
+        "The planet cannot afford delays, excuses, or more greenwashing."
+        <br><br>— UN Secretary-General António Guterres, COP27
+      </blockquote>
+    </div>
+    <div class="overview-right">
+      <p class="overview-body">
+        Before you arrive in class this week, this module will equip you to recognize 
+        greenwashing — not just in corporate advertising, but in the educational materials, 
+        sponsored resources, and school programming you'll encounter as a teacher.
+      </p>
+      <p class="overview-body">
+        You'll also explore carbon colonialism: the way climate "solutions" can repeat 
+        colonial patterns of extraction and burden-shifting, and what that means for 
+        justice-centred climate education.
+      </p>
+
+      <div class="outcomes-grid">
+        <div class="outcome-card">
+          <div class="outcome-number">01</div>
+          <div class="outcome-icon">🔍</div>
+          <div class="outcome-title">Identify</div>
+          <div class="outcome-body">Name at least four greenwashing tactics used to mislead the public</div>
+        </div>
+        <div class="outcome-card">
+          <div class="outcome-number">02</div>
+          <div class="outcome-icon">⚖️</div>
+          <div class="outcome-title">Evaluate</div>
+          <div class="outcome-body">Critically assess climate claims in marketing and educational materials</div>
+        </div>
+        <div class="outcome-card">
+          <div class="outcome-number">03</div>
+          <div class="outcome-icon">🌍</div>
+          <div class="outcome-title">Connect</div>
+          <div class="outcome-body">Explain carbon colonialism and link it to Week 3's justice frameworks</div>
+        </div>
+        <div class="outcome-card">
+          <div class="outcome-number">04</div>
+          <div class="outcome-icon">✏️</div>
+          <div class="outcome-title">Apply</div>
+          <div class="outcome-body">Design a classroom activity that builds students' critical media literacy</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONCEPTS -->
+<section class="concepts">
+  <div class="concepts-inner">
+    <div class="concepts-header">
+      <div>
+        <div class="section-label">Key Concepts</div>
+        <h2 class="concepts-heading">Three frameworks for this week</h2>
+      </div>
+      <div class="concepts-count">3 of 3 concepts</div>
+    </div>
+
+    <div class="concepts-list">
+      <div class="concept-item">
+        <div class="concept-tag">Concept 01</div>
+        <div class="concept-name">Greenwashing</div>
+        <div class="concept-def">
+          Misleading the public into believing a company is doing more to protect 
+          the environment than it actually is — promoting false solutions that distract 
+          from and delay real climate action.
+        </div>
+      </div>
+      <div class="concept-item">
+        <div class="concept-tag">Concept 02</div>
+        <div class="concept-name">False Solutions</div>
+        <div class="concept-def">
+          Climate strategies that appear credible but fail to reduce actual emissions — 
+          including poorly designed carbon offsets, vague net-zero pledges, and 
+          technological fixes that enable continued fossil fuel expansion.
+        </div>
+      </div>
+      <div class="concept-item">
+        <div class="concept-tag">Concept 03</div>
+        <div class="concept-name">Carbon Colonialism</div>
+        <div class="concept-def">
+          The way wealthy, high-emitting nations shift the burden of climate action 
+          onto communities in the Global South — through carbon offset land grabs, 
+          emissions outsourcing, and imposed solutions without consent.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BEGIN CTA -->
+<section class="begin-section">
+  <div class="begin-text">
+    <h2 class="begin-heading">Ready to begin?</h2>
+    <p class="begin-sub">
+      This module takes about 35 minutes. The teaching scenarios in Section 3 are 
+      worth sitting with — your thinking there will anchor your participation in 
+      this week's class discussion.
+    </p>
+  </div>
+  <div class="begin-action">
+    <a class="btn-begin" href="section1.html">
+      Start Module <span class="arrow"></span>
+    </a>
+    <span class="time-note">~35 min · No login required</span>
+  </div>
+</section>
+
+</main>
+</body>
+</html>
