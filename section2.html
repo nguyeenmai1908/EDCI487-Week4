@@ -1,15 +1,14 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Section 2: What Is Greenwashing? Ã¢â‚¬â€ EDCI 487 Week 4</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <title>Section 2: What Is Greenwashing? — EDCI 487 Week 4</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --forest:    #1a2e1a;
+      --forest:    #2d5a3f;
       --near-black:#1c1a14;
       --moss:      #4a6741;
       --sage:      #7a9e6e;
@@ -20,463 +19,189 @@
       --cream:     #f5f0e8;
       --white:     #fefcf8;
     }
-
     html { scroll-behavior: smooth; }
+    body { font-family: 'DM Sans', sans-serif; font-weight: 300; background: var(--cream); color: var(--near-black); min-height: 100vh; }
+    body::after { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9999; opacity: 0.035; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background-size: 200px 200px; }
 
-    body {
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 300;
-      background: var(--cream);
-      color: var(--near-black);
-      margin-left: 220px;
-      min-height: 100vh;
-    }
+    #progress-bar { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--clay), var(--ember)); transform-origin: left; transform: scaleX(0); transition: transform 0.1s linear; z-index: 1000; }
 
-    body::after {
-      content: '';
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 9999;
-      opacity: 0.035;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-      background-size: 200px 200px;
-    }
+    /* HAMBURGER TOGGLE */
+    .sidebar-toggle { position: fixed; top: 1.25rem; left: 1.25rem; z-index: 200; width: 40px; height: 40px; background: rgba(47,74,47,0.9); border: 1px solid rgba(122,158,110,0.25); border-radius: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; padding: 0; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); transition: background 0.2s; }
+    .sidebar-toggle:hover { background: rgba(47,74,47,1); }
+    .sidebar-toggle .bar { display: block; width: 18px; height: 2px; background: var(--cream); border-radius: 1px; transition: transform 0.3s ease, opacity 0.3s ease; }
+    .sidebar-toggle.open .bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .sidebar-toggle.open .bar:nth-child(2) { opacity: 0; }
+    .sidebar-toggle.open .bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
-    #progress-bar {
-      position: fixed;
-      top: 0; left: 220px; right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, var(--clay), var(--ember));
-      transform-origin: left;
-      transform: scaleX(0.2);
-      transition: transform 0.1s linear;
-      z-index: 1000;
-    }
+    /* SIDEBAR OVERLAY */
+    .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 140; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+    .sidebar-overlay.visible { opacity: 1; pointer-events: auto; }
 
-    .sidebar {
-      position: fixed;
-      top: 0; left: 0;
-      width: 220px; height: 100vh;
-      background: #2f4a2f;
-      border-right: 1px solid rgba(122,158,110,0.2);
-      z-index: 100;
-      display: flex; flex-direction: column;
-      padding: 2rem 0;
-      overflow-y: auto;
-    }
-
-    .sidebar-logo {
-      font-size: 0.68rem;
-      letter-spacing: 0.22em;
-      text-transform: uppercase;
-      color: rgba(122,158,110,0.5);
-      padding: 0 1.5rem 1.5rem;
-      border-bottom: 1px solid rgba(122,158,110,0.1);
-      margin-bottom: 1.5rem;
-      line-height: 1.6;
-    }
-
-    .sidebar-nav { display: flex; flex-direction: column; gap: 0; padding: 0; }
-
-    .nav-item {
-      display: flex; align-items: flex-start; gap: 0.6rem;
-      padding: 0.7rem 1.5rem;
-      border-left: 3px solid transparent;
-      text-decoration: none;
-      transition: background 0.2s ease;
-    }
+    /* SIDEBAR */
+    .sidebar { position: fixed; top: 0; left: 0; width: 260px; height: 100vh; background: #2f4a2f; border-right: 1px solid rgba(122,158,110,0.2); z-index: 150; display: flex; flex-direction: column; align-items: stretch; padding: 4.5rem 0 2rem; overflow-y: auto; transform: translateX(-100%); transition: transform 0.3s ease; text-align: left; }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-logo { font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(122,158,110,0.5); padding: 0 1rem 1.5rem 2rem; border-bottom: 1px solid rgba(122,158,110,0.1); margin-bottom: 1.5rem; line-height: 1.6; }
+    .sidebar-nav { display: flex; flex-direction: column; padding: 0; }
+    .nav-item { display: flex; align-items: baseline; gap: 0.5rem; padding: 0.7rem 1rem 0.7rem 2rem; position: relative; text-decoration: none; transition: background 0.2s ease; width: 100%; }
     .nav-item:hover { background: rgba(245,240,232,0.04); }
-    .nav-item.active { border-left-color: var(--clay); }
-
-    .nav-num { font-size: 0.68rem; font-weight: 500; color: rgba(245,240,232,0.25); flex-shrink: 0; margin-top: 2px; }
+    .nav-item.active::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--clay); }
+    .nav-num { font-size: 0.68rem; font-weight: 500; color: rgba(245,240,232,0.25); width: 1.5rem; flex-shrink: 0; text-align: left; }
     .nav-item.active .nav-num { color: var(--clay); }
-    .nav-label { font-size: 0.75rem; font-weight: 300; line-height: 1.4; color: rgba(245,240,232,0.35); }
+    .nav-label { font-size: 0.75rem; font-weight: 300; line-height: 1.4; color: rgba(245,240,232,0.35); flex: 1; min-width: 0; text-align: left; }
     .nav-item.active .nav-label { color: var(--cream); font-weight: 500; }
+    .nav-time { font-size: 0.6rem; color: rgba(245,240,232,0.22); letter-spacing: 0.06em; flex-shrink: 0; white-space: nowrap; }
 
-    .block-inner {
-      width: min(1080px, 100%);
-      margin: 0 auto;
-    }
+    .block-inner { width: min(1080px, 100%); margin: 0 auto; }
 
-    .section-header {
-      background: var(--forest);
-      padding: 2.5rem 3rem;
-    }
-    .section-header-row {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      text-align: left;
-    }
-    .sh-number {
-      font-family: 'Playfair Display', serif;
-      font-size: 10rem; font-weight: 900;
-      color: rgba(255,255,255,0.2);
-      line-height: 1; flex-shrink: 0; user-select: none;
-    }
+    /* SECTION HEADER */
+    .section-header { background: var(--forest); padding: 2.5rem 3rem; }
+    .section-header-row { display: flex; align-items: center; gap: 1.5rem; }
+    .sh-number { font-family: 'Playfair Display', serif; font-size: 10rem; font-weight: 900; color: rgba(255,255,255,0.2); line-height: 1; flex-shrink: 0; user-select: none; }
     .sh-center { flex: 1; }
     .sh-label { font-size: 1rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--clay); margin-bottom: 0.35rem; }
     .sh-title { font-family: 'Playfair Display', serif; font-size: 2.8rem; font-weight: 700; color: var(--cream); line-height: 1.25; }
-    .sh-time {
-      font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase;
-      color: rgba(245,240,232,0.28); flex-shrink: 0; align-self: center;
-    }
+    .sh-time { font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(245,240,232,0.28); flex-shrink: 0; align-self: center; }
 
+    /* CONTENT BLOCKS */
     .content-block { background: var(--white); padding: 3.5rem 3rem 2.5rem; }
     .content-block.alt { background: var(--cream); }
-    .content-block .block-inner { width: min(1080px, 100%); margin: 0 auto; text-align: left; }
-    .resource-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.45rem;
-      margin-bottom: 0.9rem;
-      font-size: 0.72rem;
-      font-weight: 500;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--clay);
-      text-decoration: none;
-    }
-    .resource-link:hover { color: var(--ember); }
-    .resource-icon {
-      font-size: 0.85rem;
-      line-height: 1;
-    }
     .content-block p { font-size: 1rem; line-height: 1.9; color: rgba(26,46,26,0.75); margin-bottom: 0.5rem; }
-    .content-block .intro-line {
-      white-space: normal;
-      max-width: none;
-      font-size: 1rem;
-    }
     .content-block p:last-child { margin-bottom: 0; }
-    .content-block strong { font-weight: 700; }
+    .content-block strong { font-weight: 500; color: var(--near-black); }
 
-    /* Back-link */
-    .back-link {
-      display: inline-flex; align-items: center; gap: 0.4rem;
-      font-size: 0.75rem; color: var(--sage); text-decoration: none;
-      padding: 1.25rem 4rem; background: var(--forest);
-      width: 100%; transition: color 0.2s;
-    }
-    .back-link:hover { color: var(--cream); }
+    .resource-link { display: inline-flex; align-items: center; gap: 0.45rem; margin-bottom: 0.9rem; font-size: 0.72rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--clay); text-decoration: none; }
+    .resource-link:hover { color: var(--ember); }
 
-    /* Ã¢â€â‚¬Ã¢â€â‚¬ ACCORDION Ã¢â€â‚¬Ã¢â€â‚¬ */
-    .accordion-block {
-      padding: 3rem 4rem;
-      background: var(--cream);
-    }
+    /* SCROLL REVEAL */
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.55s ease, transform 0.55s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal[data-delay="1"] { transition-delay: 0.1s; }
+    .reveal[data-delay="2"] { transition-delay: 0.2s; }
+    .reveal[data-delay="3"] { transition-delay: 0.3s; }
 
-    .accordion-intro {
-      font-size: 0.95rem;
-      font-weight: 500;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--moss);
-      margin-bottom: 1.5rem;
-    }
+    /* ACCORDION */
+    .accordion-block { padding: 3rem 3rem; background: var(--cream); }
+    .accordion-intro { font-size: 0.85rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--moss); margin-bottom: 1.5rem; }
 
-    .accordion-item {
-      border-bottom: 1px solid rgba(74,103,65,0.2);
-    }
-
-    .accordion-trigger {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1.25rem 0;
-      background: none;
-      border: none;
-      cursor: pointer;
-      text-align: left;
-      gap: 1rem;
-    }
-
+    .accordion-item { border-bottom: 1px solid rgba(74,103,65,0.2); }
+    .accordion-trigger { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 0; background: none; border: none; cursor: pointer; text-align: left; gap: 1rem; }
     .accordion-trigger:hover .tactic-name { color: var(--clay); }
 
-    .tactic-number {
-      font-family: 'Playfair Display', serif;
-      font-size: 1rem;
-      color: var(--sage);
-      flex-shrink: 0;
-      width: 1.5rem;
-    }
+    .tactic-number { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--sage); flex-shrink: 0; width: 1.5rem; }
+    .tactic-name { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.18rem; color: var(--near-black); flex: 1; transition: color 0.2s; }
 
-    .tactic-name {
-      font-family: 'Playfair Display', serif;
-      font-style: italic;
-      font-size: 1.18rem;
-      color: var(--near-black);
-      flex: 1;
-      transition: color 0.2s;
-    }
-
-    .accordion-arrow {
-      width: 18px; height: 18px;
-      color: var(--sage);
-      transition: transform 0.25s ease;
-      flex-shrink: 0;
-    }
-
+    .accordion-arrow { width: 18px; height: 18px; color: var(--sage); transition: transform 0.25s ease; flex-shrink: 0; }
     .accordion-item.open .accordion-arrow { transform: rotate(180deg); }
     .accordion-item.open .tactic-name { color: var(--clay); }
 
-    .accordion-panel {
-      display: none;
-      padding: 0 0 1.5rem 2.5rem;
-    }
-
+    .accordion-panel { display: none; padding: 0 0 1.5rem 2.5rem; }
     .accordion-item.open .accordion-panel { display: block; }
+    .accordion-panel p { font-size: 1rem; line-height: 1.75; color: var(--near-black); margin-bottom: 0.75rem; }
+    .accordion-example { font-size: 0.92rem; color: var(--moss); font-style: italic; padding: 0.6rem 1rem; border-left: 2px solid var(--sage); margin-top: 0.5rem; line-height: 1.6; }
 
-    .accordion-panel p {
-      font-size: 1rem;
-      line-height: 1.75;
-      color: var(--near-black);
-      margin-bottom: 0.75rem;
-    }
+    /* KNOWLEDGE CHECK */
+    .kc-block { padding: 3rem 3rem; background: var(--sage-pale); }
+    .kc-label { font-size: 0.85rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--clay); margin-bottom: 1.5rem; display: inline-flex; align-items: center; gap: 0.85rem; }
+    .kc-label::after { content: ''; width: 56px; height: 2px; background: var(--clay); border-radius: 999px; }
 
-    .accordion-example {
-      font-size: 0.92rem;
-      color: var(--moss);
-      font-style: italic;
-      padding: 0.6rem 1rem;
-      border-left: 2px solid var(--sage);
-      margin-top: 0.5rem;
-      line-height: 1.6;
-    }
+    .kc-question { margin-bottom: 2.5rem; padding: 1.75rem 2rem; background: var(--white); border: 1px solid rgba(74,103,65,0.12); border-radius: 12px; }
+    .kc-question:last-of-type { margin-bottom: 0; }
 
-    /* Ã¢â€â‚¬Ã¢â€â‚¬ KNOWLEDGE CHECK Ã¢â€â‚¬Ã¢â€â‚¬ */
-    .kc-block {
-      padding: 3rem 4rem;
-      background: var(--sand);
-    }
+    .kc-q-text { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 500; color: var(--near-black); line-height: 1.55; margin-bottom: 1.25rem; padding-left: 1rem; border-left: 3px solid var(--clay); }
 
-    .kc-label {
-      font-size: 0.95rem;
-      font-weight: 500;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--clay);
-      margin-bottom: 1.5rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.85rem;
-    }
-
-    .kc-label::after {
-      content: '';
-      width: 56px;
-      height: 2px;
-      background: var(--clay);
-      border-radius: 999px;
-    }
-
-    .kc-question {
-      margin-bottom: 2.5rem;
-      padding: 1.75rem 2rem;
-      background: var(--white);
-      border: 1px solid rgba(74,103,65,0.15);
-      border-radius: 18px;
-      box-shadow: 0 8px 24px rgba(26,46,26,0.04);
-    }
-
-    .kc-question:last-of-type {
-      margin-bottom: 0;
-    }
-
-    .kc-q-text {
-      font-family: 'Playfair Display', serif;
-      font-size: 1rem;
-      font-weight: 500;
-      color: var(--near-black);
-      line-height: 1.55;
-      margin-bottom: 1.25rem;
-      padding-left: 1rem;
-      border-left: 3px solid var(--clay);
-    }
-
-    .kc-options {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-      width: 100%;
-    }
-
-    .kc-option {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.75rem;
-      width: 100%;
-      padding: 0.75rem 1rem;
-      border: 1px solid rgba(74,103,65,0.2);
-      border-radius: 12px;
-      cursor: pointer;
-      transition: background 0.15s, border-color 0.15s;
-      user-select: none;
-    }
-
+    .kc-options { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; }
+    .kc-option { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.75rem 1rem; border: 1px solid rgba(74,103,65,0.15); border-radius: 12px; cursor: pointer; transition: background 0.15s, border-color 0.15s; user-select: none; }
     .kc-option:hover { background: var(--sage-pale); border-color: var(--sage); }
-
-    .kc-option.correct {
-      background: var(--sage-pale);
-      border-color: var(--sage);
-    }
-
-    .kc-option.incorrect {
-      background: #f9eae4;
-      border-color: #c4622d55;
-    }
-
     .kc-option input { accent-color: var(--clay); flex-shrink: 0; margin-top: 0.18rem; }
+    .kc-option-label { font-size: 0.875rem; font-weight: 300; line-height: 1.5; cursor: pointer; }
 
-    .kc-option-label {
-      font-size: 0.875rem;
-      font-weight: 300;
-      line-height: 1.5;
-      cursor: pointer;
-    }
+    .kc-option.correct { background: var(--sage-pale); border-color: var(--sage); pointer-events: none; }
+    .kc-option.incorrect { background: #fdecea; border-color: #d9534f; }
+    .kc-option.disabled { opacity: 0.45; pointer-events: none; }
 
-    .kc-feedback {
-      display: none;
-      padding: 1rem 1.25rem;
-      background: var(--sage-pale);
-      border-left: 3px solid var(--sage);
-      font-size: 0.875rem;
-      line-height: 1.7;
-      color: var(--near-black);
-      margin-top: 0.75rem;
-      border-radius: 12px;
-    }
+    .kc-feedback-msg { font-size: 0.82rem; font-weight: 500; margin-top: 0.75rem; padding: 0.5rem 0.85rem; border-radius: 6px; display: none; }
+    .kc-feedback-msg.wrong { display: block; background: #fdecea; color: #a94442; }
+    .kc-feedback-msg.right { display: block; background: var(--sage-pale); color: var(--moss); }
 
+    .kc-feedback { display: none; padding: 1rem 1.25rem; background: var(--sage-pale); border-left: 3px solid var(--sage); font-size: 0.875rem; line-height: 1.7; color: var(--near-black); margin-top: 0.75rem; border-radius: 8px; }
     .kc-feedback.show { display: block; }
 
-    .kc-textarea {
-      width: 100%;
-      max-width: none;
-      min-height: 110px;
-      padding: 1rem 1.25rem;
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 300;
-      font-size: 0.9rem;
-      line-height: 1.7;
-      color: var(--near-black);
-      background: var(--cream);
-      border: 1px solid rgba(74,103,65,0.25);
-      border-radius: 12px;
-      resize: vertical;
-      transition: border-color 0.2s;
-    }
+    .kc-textarea { width: 100%; min-height: 110px; padding: 1rem 1.25rem; font-family: 'DM Sans', sans-serif; font-weight: 300; font-size: 0.9rem; line-height: 1.7; color: var(--near-black); background: var(--cream); border: 1px solid rgba(74,103,65,0.25); border-radius: 12px; resize: vertical; transition: border-color 0.2s; }
+    .kc-textarea:focus { outline: none; border-color: var(--sage); }
+    .kc-textarea-prompt { font-size: 0.78rem; color: var(--sage); font-style: italic; margin-top: 0.5rem; }
 
-    .kc-textarea:focus {
-      outline: none;
-      border-color: var(--sage);
-    }
+    /* TRANSITION CARD */
+    .transition-card { padding: 3rem; background: var(--forest); }
+    .transition-card p { font-size: 1rem; line-height: 1.8; color: rgba(245,240,232,0.65); font-style: italic; font-family: 'Playfair Display', serif; }
+    .transition-card-line { width: 40px; height: 2px; background: var(--clay); margin-bottom: 1.5rem; }
 
-    .kc-textarea-prompt {
-      font-size: 0.78rem;
-      color: var(--sage);
-      font-style: italic;
-      margin-top: 0.5rem;
-    }
-
-    /* Ã¢â€â‚¬Ã¢â€â‚¬ TRANSITION Ã¢â€â‚¬Ã¢â€â‚¬ */
-    .transition-card {
-      background: var(--forest);
-      padding: 2.5rem 4rem;
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-    }
-    .transition-card-line { width: 3px; height: 56px; background: linear-gradient(to bottom, var(--clay), var(--ember)); flex-shrink: 0; border-radius: 2px; }
-    .transition-card p { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1rem; color: var(--sand); line-height: 1.6; margin: 0; }
-
-    /* Ã¢â€â‚¬Ã¢â€â‚¬ CONTINUE BAR Ã¢â€â‚¬Ã¢â€â‚¬ */
-    .continue-bar { background: var(--forest); padding: 1.5rem 4rem; display: flex; align-items: center; justify-content: space-between; gap: 2rem; }
-    .continue-bar-text { font-family: 'Playfair Display', serif; font-style: italic; font-size: 0.9rem; color: var(--sage); }
-    .continue-btn { display: inline-flex; align-items: center; gap: 0.5rem; font-family: 'DM Sans', sans-serif; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.05em; color: var(--white); background: var(--clay); border: none; padding: 0.75rem 1.75rem; cursor: pointer; text-decoration: none; border-radius: 1px; transition: background 0.2s; white-space: nowrap; }
-    .continue-btn:hover { background: var(--ember); }
-    .begin-section { background: var(--moss); padding: 5rem 4rem; display: flex; justify-content: space-between; align-items: center; gap: 3rem; position: relative; overflow: hidden; }
-    .begin-section::after { content: ''; position: absolute; right: -100px; top: -100px; width: 400px; height: 400px; border-radius: 50%; background: rgba(26,46,26,0.3); pointer-events: none; }
-    .begin-heading { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 700; color: var(--white); margin-bottom: 0.75rem; line-height: 1.2; }
-    .begin-sub { font-size: 1rem; line-height: 1.7; color: rgba(254,252,248,0.7); max-width: 520px; }
-    .begin-action { display: flex; flex-direction: column; align-items: flex-end; gap: 1rem; flex-shrink: 0; position: relative; z-index: 1; }
-    .btn-begin { display: inline-flex; align-items: center; gap: 0.75rem; background: var(--clay); color: var(--white); border-radius: 12px; text-decoration: none; padding: 1.1rem 2.5rem; font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 500; font-family: 'DM Sans', sans-serif; transition: background 0.25s ease, transform 0.25s ease; }
-    .btn-begin:hover { background: var(--ember); transform: translateX(4px); }
-    .btn-begin .arrow { width: 20px; height: 1px; background: currentColor; position: relative; transition: width 0.25s ease; }
+    /* BEGIN / CONTINUE CTA */
+    .begin-section { background: var(--cream); padding: 4rem 3rem; display: flex; justify-content: space-between; align-items: center; gap: 4rem; }
+    .begin-text .begin-heading { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--forest); font-weight: 700; margin-bottom: 0.6rem; }
+    .begin-text .begin-sub { font-size: 1rem; line-height: 1.75; color: rgba(26,46,26,0.6); max-width: 480px; }
+    .begin-action { display: flex; flex-direction: column; align-items: flex-end; gap: 0.75rem; flex-shrink: 0; }
+    .btn-begin { display: inline-flex; align-items: center; gap: 1rem; background: var(--clay); color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; padding: 1rem 2rem; border-radius: 4px; transition: background 0.2s; }
+    .btn-begin:hover { background: var(--ember); }
+    .btn-begin .arrow { width: 20px; height: 1px; background: currentColor; position: relative; transition: width 0.25s; }
     .btn-begin:hover .arrow { width: 28px; }
     .btn-begin .arrow::after { content: ''; position: absolute; right: 0; top: -3px; width: 7px; height: 7px; border-right: 1px solid currentColor; border-top: 1px solid currentColor; transform: rotate(45deg); }
-    .time-note { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(254,252,248,0.45); }
-    .transition-card, .continue-bar { display: none; }
+    .time-note { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(26,46,26,0.35); }
 
-    .section-header .block-inner,
-    .content-block .block-inner,
-    .accordion-block .block-inner,
-    .kc-block .block-inner,
-    .transition-card .block-inner,
-    .continue-bar .block-inner,
-    .begin-section .block-inner {
-      text-align: left;
+    @media (max-width: 768px) {
+      .section-header, .content-block, .accordion-block, .kc-block,
+      .transition-card, .begin-section { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .sh-number { font-size: 5rem; }
+      .begin-section { flex-direction: column; align-items: flex-start; }
+      .begin-action { align-items: flex-start; }
     }
-
-    .continue-bar .block-inner,
-    .begin-section .block-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 2rem;
-    }
-
-    .begin-section .block-inner {
-      width: 100%;
-      max-width: none;
-      gap: 3rem;
-      position: relative;
-      z-index: 1;
-    }
-
-    .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.5s ease, transform 0.5s ease; }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
-    .reveal[data-delay="1"] { transition-delay: 0.05s; }
-    .reveal[data-delay="2"] { transition-delay: 0.18s; }
-    .reveal[data-delay="3"] { transition-delay: 0.31s; }
   </style>
 </head>
 <body>
-
 <div id="progress-bar"></div>
 
-<aside class="sidebar" aria-label="Course outline">
+<button class="sidebar-toggle" aria-label="Toggle navigation">
+  <span class="bar"></span>
+  <span class="bar"></span>
+  <span class="bar"></span>
+</button>
+<div class="sidebar-overlay"></div>
+
+<aside class="sidebar">
   <div class="sidebar-logo">EDCI 487<br>Climate Change Education<br>Week 4</div>
   <nav class="sidebar-nav">
     <a class="nav-item" href="index.html">
-      <span class="nav-num">↑</span>
+      <span class="nav-num">&uarr;</span>
       <span class="nav-label">Intro &amp; Overview</span>
     </a>
     <a class="nav-item" href="section1.html">
       <span class="nav-num">01</span>
       <span class="nav-label">Can You Spot It?</span>
+      <span class="nav-time">4 min</span>
     </a>
     <a class="nav-item active" href="section2.html">
       <span class="nav-num">02</span>
       <span class="nav-label">What Is Greenwashing?</span>
+      <span class="nav-time">9 min</span>
     </a>
     <a class="nav-item" href="section3.html">
       <span class="nav-num">03</span>
       <span class="nav-label">Three Decisions</span>
+      <span class="nav-time">10 min</span>
     </a>
     <a class="nav-item" href="section4.html">
       <span class="nav-num">04</span>
       <span class="nav-label">Carbon Colonialism</span>
+      <span class="nav-time">7 min</span>
     </a>
     <a class="nav-item" href="section5.html">
       <span class="nav-num">05</span>
       <span class="nav-label">Your Classroom</span>
+      <span class="nav-time">5 min</span>
     </a>
   </nav>
 </aside>
 
+<!-- SECTION HEADER -->
 <section class="section-header">
   <div class="block-inner section-header-row">
     <div class="sh-number">02</div>
@@ -488,164 +213,148 @@
   </div>
 </section>
 
+<!-- INTRO -->
 <section class="content-block reveal">
   <div class="block-inner">
-    <a
-      class="resource-link"
-      href="https://un.org/en/climatechange/science/climate-issues/greenwashing"
-      target="_blank"
-      rel="noopener noreferrer"
-      title="Greenwashing – the deceptive tactics behind environmental claims"
-    >
-      <span class="resource-icon">↗</span>
-      <span>UN Resource</span>
+    <a class="resource-link" href="https://un.org/en/climatechange/science/climate-issues/greenwashing" target="_blank" rel="noopener noreferrer" title="Greenwashing &mdash; the deceptive tactics behind environmental claims">
+      <span>&#8599; UN Resource</span>
     </a>
-    <p class="intro-line">
-      Greenwashing – making environmental claims that mislead more than they inform – is what the UN describes as promoting false solutions that distract from and delay real climate action.
+    <p>
+      Greenwashing &mdash; making environmental claims that mislead more than they inform &mdash; is what the UN describes as promoting false solutions that distract from and delay real climate action.
     </p>
   </div>
 </section>
 
-<!-- ACCORDION -->
+<!-- ACCORDION: 6 Tactics -->
 <section class="accordion-block reveal">
   <div class="block-inner">
-  <div class="accordion-intro">How greenwashing works: 6 tactics to recognise</div>
+    <div class="accordion-intro">How greenwashing works: 6 tactics to recognise</div>
 
-  <div class="accordion-item" id="acc1">
-    <button class="accordion-trigger" onclick="toggleAcc('acc1')">
-      <span class="tactic-number">01</span>
-      <span class="tactic-name">Vague Claims</span>
-      <svg class="accordion-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-    </button>
-    <div class="accordion-panel">
-      <p>Using undefined words like "natural," "green," "eco-friendly," or "sustainable" that have no standard legal definition and can't be meaningfully challenged.</p>
-      <div class="accordion-example">Example: "Our packaging is better for the Earth" - better than what? By how much? Verified by whom?</div>
+    <div class="accordion-item" id="acc1">
+      <button class="accordion-trigger" onclick="toggleAcc('acc1')">
+        <span class="tactic-number">01</span>
+        <span class="tactic-name">Vague Claims</span>
+        <svg class="accordion-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="accordion-panel">
+        <p>Using undefined words like "natural," "green," "eco-friendly," or "sustainable" that have no standard legal definition and can't be meaningfully challenged.</p>
+        <div class="accordion-example">Example: "Our packaging is better for the Earth" &mdash; better than what? By how much? Verified by whom?</div>
+      </div>
     </div>
-  </div>
 
-  <div class="accordion-item" id="acc2">
-    <button class="accordion-trigger" onclick="toggleAcc('acc2')">
-      <span class="tactic-number">02</span>
-      <span class="tactic-name">The Hidden Trade-Off</span>
-      <svg class="accordion-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-    </button>
-    <div class="accordion-panel">
-      <p>Claiming one product or practice is "green" while ignoring the company's broader environmental impact. The narrow claim is technically true; the full picture is not shared.</p>
-      <div class="accordion-example">Example: A paper company advertising "sustainably sourced" paper while clear-cutting old-growth forests for other product lines.</div>
+    <div class="accordion-item" id="acc2">
+      <button class="accordion-trigger" onclick="toggleAcc('acc2')">
+        <span class="tactic-number">02</span>
+        <span class="tactic-name">The Hidden Trade-Off</span>
+        <svg class="accordion-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="accordion-panel">
+        <p>Claiming one product or practice is "green" while ignoring the company's broader environmental impact. The narrow claim is technically true; the full picture is not shared.</p>
+        <div class="accordion-example">Example: A paper company advertising "sustainably sourced" paper while clear-cutting old-growth forests for other product lines.</div>
+      </div>
     </div>
-  </div>
 
-  <div class="accordion-item" id="acc3">
-    <button class="accordion-trigger" onclick="toggleAcc('acc3')">
-      <span class="tactic-number">03</span>
-      <span class="tactic-name">False Labels</span>
-      <svg class="accordion-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-    </button>
-    <div class="accordion-panel">
-      <p>Designing packaging with green imagery, leaf icons, or certification-style badges that suggest independent endorsement - without any actual third-party verification.</p>
-      <div class="accordion-example">Example: A cleaning product with a "Certified Green" leaf symbol that was self-designed, awarded by no external body.</div>
+    <div class="accordion-item" id="acc3">
+      <button class="accordion-trigger" onclick="toggleAcc('acc3')">
+        <span class="tactic-number">03</span>
+        <span class="tactic-name">False Labels</span>
+        <svg class="accordion-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="accordion-panel">
+        <p>Designing packaging with green imagery, leaf icons, or certification-style badges that suggest independent endorsement &mdash; without any actual third-party verification.</p>
+        <div class="accordion-example">Example: A cleaning product with a "Certified Green" leaf symbol that was self-designed, awarded by no external body.</div>
+      </div>
     </div>
-  </div>
 
-  <div class="accordion-item" id="acc4">
-    <button class="accordion-trigger" onclick="toggleAcc('acc4')">
-      <span class="tactic-number">04</span>
-      <span class="tactic-name">Irrelevance</span>
-      <svg class="accordion-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-    </button>
-    <div class="accordion-panel">
-      <p>Making a claim that is technically accurate but entirely meaningless in context - often because the "achievement" is legally mandated or industry-standard.</p>
-      <div class="accordion-example">Example: "CFC-free!" - CFCs have been banned since 1987. The claim is true and tells you nothing useful.</div>
+    <div class="accordion-item" id="acc4">
+      <button class="accordion-trigger" onclick="toggleAcc('acc4')">
+        <span class="tactic-number">04</span>
+        <span class="tactic-name">Irrelevance</span>
+        <svg class="accordion-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="accordion-panel">
+        <p>Making a claim that is technically accurate but entirely meaningless in context &mdash; often because the "achievement" is legally mandated or industry-standard.</p>
+        <div class="accordion-example">Example: "CFC-free!" &mdash; CFCs have been banned since 1987. The claim is true and tells you nothing useful.</div>
+      </div>
     </div>
-  </div>
 
-  <div class="accordion-item" id="acc5">
-    <button class="accordion-trigger" onclick="toggleAcc('acc5')">
-      <span class="tactic-number">05</span>
-      <span class="tactic-name">Lesser of Two Evils</span>
-      <svg class="accordion-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-    </button>
-    <div class="accordion-panel">
-      <p>Promoting a product as "the sustainable choice" within a category that is inherently harmful - framing that obscures the larger harm of the category itself.</p>
-      <div class="accordion-example">Example: "Greener" fossil fuels. "Eco-friendly" single-use plastics. "Responsibly sourced" fast fashion. The comparison is within a broken system.</div>
+    <div class="accordion-item" id="acc5">
+      <button class="accordion-trigger" onclick="toggleAcc('acc5')">
+        <span class="tactic-number">05</span>
+        <span class="tactic-name">Lesser of Two Evils</span>
+        <svg class="accordion-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="accordion-panel">
+        <p>Promoting a product as "the sustainable choice" within a category that is inherently harmful &mdash; framing that obscures the larger harm of the category itself.</p>
+        <div class="accordion-example">Example: "Greener" fossil fuels. "Eco-friendly" single-use plastics. "Responsibly sourced" fast fashion. The comparison is within a broken system.</div>
+      </div>
     </div>
-  </div>
 
-  <div class="accordion-item" id="acc6">
-    <button class="accordion-trigger" onclick="toggleAcc('acc6')">
-      <span class="tactic-number">06</span>
-      <span class="tactic-name">The Net-Zero Mirage</span>
-      <svg class="accordion-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-    </button>
-    <div class="accordion-panel">
-      <p>Announcing ambitious climate pledges for 2050 with no credible near-term plan and no short-term targets - often while continuing to expand fossil fuel operations. The long timeline enables continued inaction today.</p>
-      <div class="accordion-example">Example: An oil company pledging net-zero by 2050 while approving three new drilling sites in 2024, with no 2025 or 2030 targets published.</div>
+    <div class="accordion-item" id="acc6">
+      <button class="accordion-trigger" onclick="toggleAcc('acc6')">
+        <span class="tactic-number">06</span>
+        <span class="tactic-name">The Net-Zero Mirage</span>
+        <svg class="accordion-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div class="accordion-panel">
+        <p>Announcing ambitious climate pledges for 2050 with no credible near-term plan and no short-term targets &mdash; often while continuing to expand fossil fuel operations. The long timeline enables continued inaction today.</p>
+        <div class="accordion-example">Example: An oil company pledging net-zero by 2050 while approving three new drilling sites in 2024, with no 2025 or 2030 targets published.</div>
+      </div>
     </div>
-  </div>
   </div>
 </section>
 
 <!-- KNOWLEDGE CHECK -->
-<section class="kc-block">
+<section class="kc-block reveal">
   <div class="block-inner">
-  <div class="kc-label">Knowledge Check</div>
+    <div class="kc-label">Knowledge Check</div>
 
-  <div class="kc-question reveal">
-    <div class="kc-q-text">
-      A clothing brand labels their new line: <em>"Made Consciously - For a Better Tomorrow."</em> Which tactic is this?
+    <!-- Q1: multiple choice -->
+    <div class="kc-question" data-answer="1">
+      <div class="kc-q-text">
+        A clothing brand labels their new line: <em>"Made Consciously &mdash; For a Better Tomorrow."</em> Which tactic is this?
+      </div>
+      <div class="kc-options">
+        <label class="kc-option"><input type="radio" name="kc1" value="0" /> <span class="kc-option-label">False Labels</span></label>
+        <label class="kc-option"><input type="radio" name="kc1" value="1" /> <span class="kc-option-label">Vague Claims</span></label>
+        <label class="kc-option"><input type="radio" name="kc1" value="2" /> <span class="kc-option-label">Irrelevance</span></label>
+        <label class="kc-option"><input type="radio" name="kc1" value="3" /> <span class="kc-option-label">Lesser of Two Evils</span></label>
+      </div>
+      <div class="kc-feedback-msg"></div>
+      <div class="kc-feedback">
+        "Consciously" and "better tomorrow" are undefined. There's no standard they're held to, no third party verifying the claim. Pure vague language &mdash; the most common greenwashing tactic.
+      </div>
     </div>
-    <div class="kc-options" id="kc1">
-      <label class="kc-option" onclick="checkKC('kc1', this, false, 'kc1-fb')">
-        <input type="radio" name="kc1" /> <span class="kc-option-label">False Labels</span>
-      </label>
-      <label class="kc-option" onclick="checkKC('kc1', this, true, 'kc1-fb')">
-        <input type="radio" name="kc1" /> <span class="kc-option-label">Vague Claims</span>
-      </label>
-      <label class="kc-option" onclick="checkKC('kc1', this, false, 'kc1-fb')">
-        <input type="radio" name="kc1" /> <span class="kc-option-label">Irrelevance</span>
-      </label>
-      <label class="kc-option" onclick="checkKC('kc1', this, false, 'kc1-fb')">
-        <input type="radio" name="kc1" /> <span class="kc-option-label">Lesser of Two Evils</span>
-      </label>
-    </div>
-    <div class="kc-feedback" id="kc1-fb">
-      "Consciously" and "better tomorrow" are undefined. There's no standard they're held to, no third party verifying the claim. Pure vague language - the most common greenwashing tactic.
-    </div>
-  </div>
 
-  <div class="kc-question reveal" data-delay="1">
-    <div class="kc-q-text">
-      A fossil fuel company announces a net-zero pledge for 2050 but publishes no 2025 or 2030 targets. What is most concerning?
+    <!-- Q2: multiple choice -->
+    <div class="kc-question" data-answer="1" data-delay="1">
+      <div class="kc-q-text">
+        A fossil fuel company announces a net-zero pledge for 2050 but publishes no 2025 or 2030 targets. What is most concerning?
+      </div>
+      <div class="kc-options">
+        <label class="kc-option"><input type="radio" name="kc2" value="0" /> <span class="kc-option-label">The pledge uses confusing language</span></label>
+        <label class="kc-option"><input type="radio" name="kc2" value="1" /> <span class="kc-option-label">It creates the appearance of action while enabling continued emissions now</span></label>
+        <label class="kc-option"><input type="radio" name="kc2" value="2" /> <span class="kc-option-label">Net-zero pledges are always unreliable</span></label>
+        <label class="kc-option"><input type="radio" name="kc2" value="3" /> <span class="kc-option-label">2050 is too far away to plan for</span></label>
+      </div>
+      <div class="kc-feedback-msg"></div>
+      <div class="kc-feedback">
+        Exactly. The UN's expert group specifically flagged this: long-horizon promises with no near-term accountability allow companies to continue emitting while claiming climate leadership. The absence of 2025 and 2030 targets is the tell.
+      </div>
     </div>
-    <div class="kc-options" id="kc2">
-      <label class="kc-option" onclick="checkKC('kc2', this, false, 'kc2-fb')">
-        <input type="radio" name="kc2" /> <span class="kc-option-label">The pledge uses confusing language</span>
-      </label>
-      <label class="kc-option" onclick="checkKC('kc2', this, true, 'kc2-fb')">
-        <input type="radio" name="kc2" /> <span class="kc-option-label">It creates the appearance of action while enabling continued emissions now</span>
-      </label>
-      <label class="kc-option" onclick="checkKC('kc2', this, false, 'kc2-fb')">
-        <input type="radio" name="kc2" /> <span class="kc-option-label">Net-zero pledges are always unreliable</span>
-      </label>
-      <label class="kc-option" onclick="checkKC('kc2', this, false, 'kc2-fb')">
-        <input type="radio" name="kc2" /> <span class="kc-option-label">2050 is too far away to plan for</span>
-      </label>
-    </div>
-    <div class="kc-feedback" id="kc2-fb">
-      Exactly. The UN's expert group specifically flagged this: long-horizon promises with no near-term accountability allow companies to continue emitting while claiming climate leadership. The absence of 2025 and 2030 targets is the tell.
-    </div>
-  </div>
 
-  <div class="kc-question reveal" data-delay="2">
-    <div class="kc-q-text">
-      Reflect: Where might greenwashing appear in an educational context - materials, resources, or speakers that make it into K-12 classrooms?
+    <!-- Q3: open reflection -->
+    <div class="kc-question reveal" data-delay="2">
+      <div class="kc-q-text">
+        Reflect: Where might greenwashing appear in an educational context &mdash; materials, resources, or speakers that make it into K&ndash;12 classrooms?
+      </div>
+      <textarea class="kc-textarea" placeholder="Write 2&ndash;3 sentences. This is for your own thinking &mdash; not submitted."></textarea>
+      <div class="kc-textarea-prompt">Think about textbooks, guest speakers, corporate-sponsored curricula, school supply choices...</div>
     </div>
-    <textarea class="kc-textarea" placeholder="Write 2–3 sentences. This is for your own thinking — not submitted."></textarea>
-    <div class="kc-textarea-prompt">Think about textbooks, guest speakers, corporate-sponsored curricula, school supply choices...</div>
-  </div>
   </div>
 </section>
 
+<!-- TRANSITION CARD -->
 <div class="transition-card reveal">
   <div class="block-inner">
     <div class="transition-card-line"></div>
@@ -653,15 +362,9 @@
   </div>
 </div>
 
-<div class="continue-bar">
-  <div class="block-inner">
-    <span class="continue-bar-text">Next: Real decisions, real classrooms</span>
-    <a href="section3.html" class="continue-btn">Section 3 Ã¢â‚¬â€ Three Decisions Ã¢â€ â€™</a>
-  </div>
-</div>
-
+<!-- BRIDGE TO NEXT SECTION -->
 <section class="begin-section reveal">
-  <div class="block-inner">
+  <div class="block-inner" style="display:flex; justify-content:space-between; align-items:center; gap:4rem; width:100%; flex-wrap:wrap;">
     <div class="begin-text">
       <h2 class="begin-heading">Ready to continue?</h2>
       <p class="begin-sub">
@@ -679,20 +382,21 @@
 </section>
 
 <script>
+  // Progress bar
   window.addEventListener('scroll', () => {
     const doc = document.documentElement;
-    const scrolled = doc.scrollTop / (doc.scrollHeight - doc.clientHeight);
-    const base = 0.2;
-    const fill = base + scrolled * (1 - base);
-    document.getElementById('progress-bar').style.transform = `scaleX(${fill})`;
-    document.getElementById('sidebar-fill').style.width = `${20 + Math.round(scrolled * 20)}%`;
+    const max = doc.scrollHeight - doc.clientHeight;
+    const scrolled = max > 0 ? Math.min(doc.scrollTop / max, 1) : 1;
+    document.getElementById('progress-bar').style.transform = `scaleX(${scrolled})`;
   });
 
+  // Scroll reveal
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
   }, { threshold: 0.08 });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
+  // Accordion
   function toggleAcc(id) {
     const item = document.getElementById(id);
     const wasOpen = item.classList.contains('open');
@@ -700,33 +404,72 @@
     if (!wasOpen) item.classList.add('open');
   }
 
-  function checkKC(groupId, el, isCorrect, fbId) {
-    const group = document.getElementById(groupId);
-    if (group.dataset.answered) return;
-    group.dataset.answered = 'true';
-    el.classList.add(isCorrect ? 'correct' : 'incorrect');
-    document.getElementById(fbId).classList.add('show');
+  // Knowledge check quiz logic — retry on wrong
+  document.querySelectorAll('.kc-question[data-answer]').forEach(question => {
+    const correctAnswer = question.dataset.answer;
+    const radios = question.querySelectorAll('input[type="radio"]');
+    const options = question.querySelectorAll('.kc-option');
+    const feedbackMsg = question.querySelector('.kc-feedback-msg');
+    const feedbackPanel = question.querySelector('.kc-feedback');
+
+    radios.forEach(radio => {
+      radio.addEventListener('change', () => {
+        // Clear previous states
+        options.forEach(opt => opt.classList.remove('correct', 'incorrect'));
+        feedbackMsg.classList.remove('wrong', 'right');
+
+        const chosen = options[radio.value];
+
+        if (radio.value === correctAnswer) {
+          chosen.classList.add('correct');
+          options.forEach(opt => opt.classList.add('disabled'));
+          chosen.classList.remove('disabled');
+          feedbackMsg.textContent = 'That\u2019s right \u2014 read the explanation below.';
+          feedbackMsg.classList.add('right');
+          feedbackPanel.classList.add('show');
+        } else {
+          chosen.classList.add('incorrect');
+          radio.checked = false;
+          feedbackMsg.textContent = 'Not quite \u2014 review the tactics above and try again.';
+          feedbackMsg.classList.add('wrong');
+          setTimeout(() => {
+            chosen.classList.remove('incorrect');
+            feedbackMsg.classList.remove('wrong');
+            feedbackMsg.style.display = 'none';
+            void feedbackMsg.offsetHeight;
+            feedbackMsg.style.display = '';
+          }, 1800);
+        }
+      });
+    });
+  });
+
+  // Sidebar toggle
+  const toggle = document.querySelector('.sidebar-toggle');
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.querySelector('.sidebar-overlay');
+
+  function openSidebar() {
+    sidebar.classList.add('open');
+    overlay.classList.add('visible');
+    toggle.classList.add('open');
   }
 
-  // Iframe-aware: when loaded inside combined.html shell
-  if (window.self !== window.top) {
-    const sidebar = document.querySelector('.sidebar');
-    if (sidebar) sidebar.style.display = 'none';
-    document.body.style.marginLeft = '0';
-    const pb = document.getElementById('progress-bar');
-    if (pb) pb.style.left = '0';
-    document.querySelectorAll('a[href]').forEach(link => {
-      const href = link.getAttribute('href');
-      if (href && !href.startsWith('http') && !href.startsWith('#') && !href.startsWith('mailto:')) {
-        link.addEventListener('click', (e) => {
-          e.preventDefault();
-          window.parent.postMessage({ navigate: href }, '*');
-        });
-      }
-    });
+  function closeSidebar() {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('visible');
+    toggle.classList.remove('open');
   }
+
+  toggle.addEventListener('click', function () {
+    if (sidebar.classList.contains('open')) {
+      closeSidebar();
+    } else {
+      openSidebar();
+    }
+  });
+
+  overlay.addEventListener('click', closeSidebar);
 </script>
 </body>
 </html>
-
-

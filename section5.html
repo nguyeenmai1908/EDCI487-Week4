@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Section 5: Your Classroom – EDCI 487 Week 4</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <title>Section 5: Your Classroom — EDCI 487 Week 4</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --forest:    #1a2e1a;
+      --forest:    #2d5a3f;
       --near-black:#1c1a14;
       --moss:      #4a6741;
       --sage:      #7a9e6e;
@@ -20,200 +20,112 @@
       --white:     #fefcf8;
     }
     html { scroll-behavior: smooth; }
-    body { font-family: 'DM Sans', sans-serif; font-weight: 300; background: var(--cream); color: var(--near-black); margin-left: 220px; min-height: 100vh; }
+    body { font-family: 'DM Sans', sans-serif; font-weight: 300; background: var(--cream); color: var(--near-black); min-height: 100vh; }
     body::after { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9999; opacity: 0.035; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); background-size: 200px 200px; }
 
-    #progress-bar { position: fixed; top: 0; left: 220px; right: 0; height: 3px; background: linear-gradient(90deg, var(--clay), var(--ember)); transform-origin: left; transform: scaleX(0.8); transition: transform 0.1s linear; z-index: 1000; }
+    #progress-bar { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--clay), var(--ember)); transform-origin: left; transform: scaleX(0); transition: transform 0.1s linear; z-index: 1000; }
 
-    .sidebar {
-      position: fixed; top: 0; left: 0;
-      width: 220px; height: 100vh;
-      background: #2f4a2f;
-      border-right: 1px solid rgba(122,158,110,0.2);
-      z-index: 100;
-      display: flex; flex-direction: column;
-      padding: 2rem 0;
-      overflow-y: auto;
-    }
-    .sidebar-logo {
-      font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase;
-      color: rgba(122,158,110,0.5);
-      padding: 0 1.5rem 1.5rem;
-      border-bottom: 1px solid rgba(122,158,110,0.1);
-      margin-bottom: 1.5rem; line-height: 1.6;
-    }
-    .sidebar-nav { display: flex; flex-direction: column; gap: 0; padding: 0; }
-    .nav-item {
-      display: flex; align-items: flex-start; gap: 0.6rem;
-      padding: 0.7rem 1.5rem;
-      border-left: 3px solid transparent;
-      text-decoration: none;
-      transition: background 0.2s ease;
-    }
+    /* HAMBURGER TOGGLE */
+    .sidebar-toggle { position: fixed; top: 1.25rem; left: 1.25rem; z-index: 200; width: 40px; height: 40px; background: rgba(47,74,47,0.9); border: 1px solid rgba(122,158,110,0.25); border-radius: 8px; cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; padding: 0; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); transition: background 0.2s; }
+    .sidebar-toggle:hover { background: rgba(47,74,47,1); }
+    .sidebar-toggle .bar { display: block; width: 18px; height: 2px; background: var(--cream); border-radius: 1px; transition: transform 0.3s ease, opacity 0.3s ease; }
+    .sidebar-toggle.open .bar:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .sidebar-toggle.open .bar:nth-child(2) { opacity: 0; }
+    .sidebar-toggle.open .bar:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 140; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+    .sidebar-overlay.visible { opacity: 1; pointer-events: auto; }
+
+    .sidebar { position: fixed; top: 0; left: 0; width: 260px; height: 100vh; background: #2f4a2f; border-right: 1px solid rgba(122,158,110,0.2); z-index: 150; display: flex; flex-direction: column; align-items: stretch; padding: 4.5rem 0 2rem; overflow-y: auto; transform: translateX(-100%); transition: transform 0.3s ease; text-align: left; }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-logo { font-size: 0.68rem; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(122,158,110,0.5); padding: 0 1rem 1.5rem 2rem; border-bottom: 1px solid rgba(122,158,110,0.1); margin-bottom: 1.5rem; line-height: 1.6; }
+    .sidebar-nav { display: flex; flex-direction: column; padding: 0; }
+    .nav-item { display: flex; align-items: baseline; gap: 0.5rem; padding: 0.7rem 1rem 0.7rem 2rem; position: relative; text-decoration: none; transition: background 0.2s ease; width: 100%; }
     .nav-item:hover { background: rgba(245,240,232,0.04); }
-    .nav-item.active { border-left-color: var(--clay); }
-    .nav-num { font-size: 0.68rem; font-weight: 500; color: rgba(245,240,232,0.25); flex-shrink: 0; margin-top: 2px; }
+    .nav-item.active::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--clay); }
+    .nav-num { font-size: 0.68rem; font-weight: 500; color: rgba(245,240,232,0.25); width: 1.5rem; flex-shrink: 0; text-align: left; }
     .nav-item.active .nav-num { color: var(--clay); }
-    .nav-label { font-size: 0.75rem; font-weight: 300; line-height: 1.4; color: rgba(245,240,232,0.35); }
+    .nav-label { font-size: 0.75rem; font-weight: 300; line-height: 1.4; color: rgba(245,240,232,0.35); flex: 1; min-width: 0; text-align: left; }
     .nav-item.active .nav-label { color: var(--cream); font-weight: 500; }
-
-    .back-link { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.75rem; color: var(--sage); text-decoration: none; padding: 1.25rem 4rem; background: var(--forest); width: 100%; transition: color 0.2s; }
-    .back-link:hover { color: var(--cream); }
+    .nav-time { font-size: 0.6rem; color: rgba(245,240,232,0.22); letter-spacing: 0.06em; flex-shrink: 0; white-space: nowrap; }
 
     .block-inner { width: min(1080px, 100%); margin: 0 auto; }
 
+    /* SECTION HEADER */
     .section-header { background: var(--forest); padding: 2.5rem 3rem; }
-    .section-header-row { display: flex; align-items: center; gap: 1.5rem; text-align: left; }
+    .section-header-row { display: flex; align-items: center; gap: 1.5rem; }
     .sh-number { font-family: 'Playfair Display', serif; font-size: 10rem; font-weight: 900; color: rgba(255,255,255,0.2); line-height: 1; flex-shrink: 0; user-select: none; }
     .sh-center { flex: 1; }
     .sh-label { font-size: 1rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--clay); margin-bottom: 0.35rem; }
     .sh-title { font-family: 'Playfair Display', serif; font-size: 2.8rem; font-weight: 700; color: var(--cream); line-height: 1.25; }
     .sh-time { font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(245,240,232,0.28); flex-shrink: 0; align-self: center; }
 
-    .content-block { padding: 3.5rem 3rem 2.5rem; background: var(--white); }
+    /* CONTENT BLOCKS */
+    .content-block { background: var(--white); padding: 3.5rem 3rem 2.5rem; }
     .content-block.alt { background: var(--cream); }
-    .content-block .block-inner { text-align: left; }
-    .content-block p { font-size: 1rem; line-height: 1.9; color: rgba(26,46,26,0.75); max-width: none; margin-bottom: 0.5rem; }
+    .content-block p { font-size: 1rem; line-height: 1.9; color: rgba(26,46,26,0.75); margin-bottom: 0.5rem; }
     .content-block p:last-child { margin-bottom: 0; }
     .content-block strong { font-weight: 500; color: var(--near-black); }
 
-    /* Warm-up think */
-    .warmup-block {
-      padding: 2.5rem 3rem;
-      background: var(--sage-pale);
-      border-left: none;
-    }
-    .warmup-label { font-size: 0.85rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--moss); margin-bottom: 1rem; }
-    .warmup-title { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1rem; color: var(--forest); margin-bottom: 1rem; }
-    .warmup-list { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
-    .warmup-list li { font-size: 1rem; line-height: 1.9; color: var(--near-black); padding-left: 1.1rem; position: relative; }
-    .warmup-list li::before { content: '•'; position: absolute; left: 0; color: var(--clay); font-size: 1.1rem; line-height: 1; top: 0.22rem; }
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.55s ease, transform 0.55s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal[data-delay="1"] { transition-delay: 0.1s; }
+    .reveal[data-delay="2"] { transition-delay: 0.2s; }
+    .reveal[data-delay="3"] { transition-delay: 0.3s; }
+    .reveal[data-delay="4"] { transition-delay: 0.4s; }
 
-    /* Reflection form */
-    .reflection-block {
-      padding: 3.5rem 3rem 2.5rem;
-      background: var(--cream);
-    }
-    .refl-card {
-      background: var(--white);
-      border: 1px solid rgba(74,103,65,0.15);
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow: 0 8px 24px rgba(26,46,26,0.04);
-    }
-    .refl-header {
-      background: var(--forest);
-      padding: 1.5rem 2rem;
-    }
+    /* WARM-UP */
+    .reflection-section { background: var(--sage-pale); padding: 3.5rem 3rem 3rem; }
+    .reflection-heading { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700; color: var(--forest); margin-bottom: 0.4rem; }
+    .reflection-subhead { font-size: 0.95rem; line-height: 1.7; color: rgba(26,46,26,0.6); margin-bottom: 1.5rem; }
+    .reflection-options { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.75rem; }
+    .reflection-options li { font-size: 0.95rem; line-height: 1.7; color: rgba(26,46,26,0.75); padding-left: 1.25rem; position: relative; }
+    .reflection-options li::before { content: ''; position: absolute; left: 0; top: 0.65em; width: 6px; height: 6px; border-radius: 50%; background: var(--clay); }
+
+    /* REFLECTION FORM */
+    .refl-card { background: var(--white); border: 1px solid rgba(74,103,65,0.12); border-radius: 12px; overflow: hidden; }
+    .refl-header { background: var(--forest); padding: 1.5rem 2rem; }
     .refl-label { font-size: 0.85rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--clay); margin: 0; }
-    .refl-prompt-box {
-      background: var(--cream);
-      padding: 1.75rem 2rem;
-      border-bottom: 1px solid rgba(74,103,65,0.12);
-    }
+    .refl-prompt-box { background: var(--cream); padding: 1.75rem 2rem; border-bottom: 1px solid rgba(74,103,65,0.12); }
     .refl-prompt-title { font-family: 'Playfair Display', serif; font-style: italic; font-size: 1.08rem; color: var(--forest); margin-bottom: 1rem; }
     .refl-prompt-list { list-style: none; display: flex; flex-direction: column; gap: 0.55rem; }
     .refl-prompt-list li { font-size: 1rem; line-height: 1.9; color: var(--near-black); display: flex; gap: 0.75rem; align-items: flex-start; }
     .refl-prompt-list li::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--clay); flex-shrink: 0; margin-top: 0.7rem; }
     .refl-form-body { padding: 1.75rem 2rem 2rem; }
 
-    .form-group { margin-bottom: 1.5rem; }
-    .form-label { display: block; font-size: 0.85rem; font-weight: 500; color: var(--moss); margin-bottom: 0.5rem; }
-    .form-input, .form-textarea {
-      width: 100%;
-      padding: 0.9rem 1.15rem;
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 300;
-      font-size: 0.95rem;
-      color: var(--near-black);
-      background: var(--cream);
-      border: 1px solid rgba(74,103,65,0.2);
-      border-radius: 12px;
-      transition: border-color 0.2s, box-shadow 0.2s;
-    }
-    .form-input:focus, .form-textarea:focus { outline: none; border-color: var(--sage); box-shadow: 0 0 0 3px rgba(122,158,110,0.12); }
-    .form-textarea { min-height: 200px; resize: vertical; line-height: 1.7; }
-    .form-hint { font-size: 0.75rem; color: var(--sage); font-style: italic; margin-top: 0.4rem; }
-    .char-count { font-size: 0.78rem; color: var(--sage); text-align: right; margin-top: 0.4rem; }
+    /* CLOSING HERO */
+    .closing-hero { background: var(--forest); padding: 5rem 3rem; text-align: center; }
+    .closing-hero-eyebrow { font-size: 0.72rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--clay); margin-bottom: 1rem; }
+    .closing-hero-heading { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 900; color: var(--white); margin-bottom: 1.5rem; line-height: 1.15; }
+    .closing-hero-body { font-size: 1rem; line-height: 1.85; color: rgba(245,240,232,0.6); max-width: 640px; margin: 0 auto; }
 
-    .submit-btn {
-      display: inline-flex; align-items: center; gap: 0.6rem;
-      font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500;
-      color: var(--white); background: var(--clay);
-      border: none; padding: 0.9rem 2rem;
-      cursor: pointer; border-radius: 12px;
-      transition: background 0.2s, transform 0.15s;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-    }
-    .submit-btn:hover { background: var(--ember); transform: translateY(-1px); }
-    .submit-btn:disabled { background: var(--sage); cursor: default; transform: none; }
-
-    .submit-success {
-      display: none;
-      padding: 1.25rem 1.5rem;
-      background: var(--sage-pale);
-      border: 1px solid rgba(122,158,110,0.25);
-      border-radius: 12px;
-      margin-top: 1.25rem;
-    }
-    .submit-success.show { display: block; }
-    .submit-success p { font-size: 1rem; line-height: 1.9; color: var(--near-black); margin: 0; }
-
-    /* Closing hero */
-    .closing-hero {
-      background: var(--forest);
-      padding: 5rem 3rem;
-      position: relative;
-      overflow: hidden;
-    }
-    .closing-hero::before {
-      content: '';
-      position: absolute;
-      top: -60px; right: -40px;
-      width: 300px; height: 300px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(196,98,45,0.1) 0%, transparent 70%);
-      pointer-events: none;
-    }
-    .closing-eyebrow { font-size: 0.85rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: var(--clay); margin-bottom: 1.25rem; }
-    .closing-title { font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(1.4rem, 3vw, 2rem); color: var(--cream); line-height: 1.2; margin-bottom: 1.5rem; max-width: none; }
-    .closing-body { font-size: 1rem; line-height: 1.9; color: var(--sand); max-width: none; margin-bottom: 2.5rem; }
-
-    /* Takeaways */
-    .takeaways-block { padding: 3rem 3rem; background: var(--cream); }
-    .takeaways-card {
-      background: var(--white);
-      border: 1px solid rgba(74,103,65,0.15);
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow: 0 8px 24px rgba(26,46,26,0.04);
-    }
-    .takeaways-header {
-      background: var(--forest);
-      padding: 1.5rem 2rem;
-    }
-    .takeaways-label { font-size: 0.85rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--clay); margin: 0; }
-    .takeaways-grid { display: flex; flex-direction: column; gap: 0; }
-    .takeaway-item { display: flex; flex-direction: row; gap: 1.25rem; align-items: baseline; padding: 0.9rem 2rem; border-bottom: 1px solid rgba(74,103,65,0.05); }
+    /* TAKEAWAYS */
+    .takeaways-block { background: var(--cream); padding: 4rem 3rem; }
+    .takeaways-label { font-size: 0.85rem; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--moss); margin-bottom: 2rem; }
+    .takeaway-item { display: grid; grid-template-columns: 3rem 1fr; gap: 1.25rem; padding: 1.25rem 0; border-bottom: 1px solid rgba(74,103,65,0.1); align-items: baseline; }
     .takeaway-item:last-child { border-bottom: none; }
-    .takeaway-marker { font-family: 'Playfair Display', serif; font-size: 1.3rem; font-weight: 700; color: var(--clay); flex-shrink: 0; white-space: nowrap; opacity: 0.7; }
-    .takeaway-text { font-size: 1rem; line-height: 1.9; color: var(--near-black); }
-    .takeaway-text strong { font-weight: 500; }
+    .takeaway-num { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 700; color: var(--clay); line-height: 1; }
+    .takeaway-text { font-size: 0.95rem; line-height: 1.7; color: rgba(26,46,26,0.7); }
+    .takeaway-text strong { font-weight: 500; color: var(--near-black); }
 
-    .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.5s ease, transform 0.5s ease; }
-    .reveal.visible { opacity: 1; transform: translateY(0); }
-    .reveal[data-delay="1"] { transition-delay: 0.05s; }
-    .reveal[data-delay="2"] { transition-delay: 0.18s; }
-    .reveal[data-delay="3"] { transition-delay: 0.31s; }
-    .reveal[data-delay="4"] { transition-delay: 0.44s; }
+    @media (max-width: 768px) {
+      .section-header, .content-block, .reflection-section,
+      .closing-hero, .takeaways-block { padding-left: 1.5rem; padding-right: 1.5rem; }
+      .sh-number { font-size: 5rem; }
+    }
   </style>
 </head>
 <body>
-
 <div id="progress-bar"></div>
 
-<aside class="sidebar" aria-label="Course outline">
+<button class="sidebar-toggle" aria-label="Toggle navigation">
+  <span class="bar"></span>
+  <span class="bar"></span>
+  <span class="bar"></span>
+</button>
+<div class="sidebar-overlay"></div>
+
+<aside class="sidebar">
   <div class="sidebar-logo">EDCI 487<br>Climate Change Education<br>Week 4</div>
   <nav class="sidebar-nav">
     <a class="nav-item" href="index.html">
@@ -223,26 +135,32 @@
     <a class="nav-item" href="section1.html">
       <span class="nav-num">01</span>
       <span class="nav-label">Can You Spot It?</span>
+      <span class="nav-time">4 min</span>
     </a>
     <a class="nav-item" href="section2.html">
       <span class="nav-num">02</span>
       <span class="nav-label">What Is Greenwashing?</span>
+      <span class="nav-time">9 min</span>
     </a>
     <a class="nav-item" href="section3.html">
       <span class="nav-num">03</span>
       <span class="nav-label">Three Decisions</span>
+      <span class="nav-time">10 min</span>
     </a>
     <a class="nav-item" href="section4.html">
       <span class="nav-num">04</span>
       <span class="nav-label">Carbon Colonialism</span>
+      <span class="nav-time">7 min</span>
     </a>
     <a class="nav-item active" href="section5.html">
       <span class="nav-num">05</span>
       <span class="nav-label">Your Classroom</span>
+      <span class="nav-time">5 min</span>
     </a>
   </nav>
 </aside>
 
+<!-- SECTION HEADER -->
 <section class="section-header">
   <div class="block-inner section-header-row">
     <div class="sh-number">05</div>
@@ -254,37 +172,38 @@
   </div>
 </section>
 
+<!-- INTRO -->
 <section class="content-block reveal">
   <div class="block-inner">
-  <p>
-    You'll be teaching in a world saturated with climate messaging – some genuine, much of it 
-    designed to create feelings of progress without requiring change. Your students will encounter 
-    this constantly: in advertisements, on social media, in educational resources, and sometimes 
-    in your own school's programming.
-  </p>
-  <p>
-    <strong>Critical media literacy around climate is not an optional add-on.</strong> It's a core 
-    competency for civic life in the 21st century – and it's something you can build into virtually 
-    any subject area or grade level.
-  </p>
+    <p>
+      You'll be teaching in a world saturated with climate messaging &mdash; some genuine, much of it
+      designed to create feelings of progress without requiring change. Your students will encounter
+      this constantly: in advertisements, on social media, in educational resources, and sometimes
+      in your own school's programming.
+    </p>
+    <p>
+      <strong>Critical media literacy around climate is not an optional add-on.</strong> It's a core
+      competency for civic life in the 21st century &mdash; and it's something you can build into virtually
+      any subject area or grade level.
+    </p>
   </div>
 </section>
 
 <!-- WARM-UP -->
-<div class="warmup-block reveal">
+<section class="reflection-section reveal">
   <div class="block-inner">
-  <div class="warmup-label">Before you write – take a moment to think</div>
-  <div class="warmup-title">Consider:</div>
-  <ul class="warmup-list">
-    <li>Where in a typical school day might greenwashing appear unquestioned?</li>
-    <li>What's one question you could ask students that would prompt critical thinking about a climate claim?</li>
-    <li>What would you need to feel confident teaching this content?</li>
-  </ul>
+    <h2 class="reflection-heading">Before you write &mdash; take a moment to think</h2>
+    <p class="reflection-subhead">Consider:</p>
+    <ul class="reflection-options">
+      <li>Where in a typical school day might greenwashing appear unquestioned?</li>
+      <li>What's one question you could ask students that would prompt critical thinking about a climate claim?</li>
+      <li>What would you need to feel confident teaching this content?</li>
+    </ul>
   </div>
-</div>
+</section>
 
-<!-- REFLECTION FORM -->
-<section class="reflection-block">
+<!-- REFLECTION PROMPT -->
+<section class="content-block alt">
   <div class="block-inner">
     <div class="refl-card reveal">
       <div class="refl-header">
@@ -292,7 +211,7 @@
       </div>
 
       <div class="refl-prompt-box">
-        <div class="refl-prompt-title">Design one classroom activity that builds students’ ability to critically evaluate climate claims.</div>
+        <div class="refl-prompt-title">Design one classroom activity that builds students' ability to critically evaluate climate claims.</div>
         <ul class="refl-prompt-list">
           <li>The grade level and subject area</li>
           <li>A brief description of what students do</li>
@@ -302,149 +221,77 @@
       </div>
 
       <div class="refl-form-body">
-        <form id="reflection-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
-          <input type="hidden" name="_subject" value="EDCI 487 Week 4 Reflection" />
-
-          <div class="form-group">
-            <label class="form-label" for="grade-level">Grade level and subject area</label>
-            <input class="form-input" type="text" id="grade-level" name="grade_level" placeholder="e.g., Grade 8 Social Studies" />
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="reflection-text">Your activity design (minimum 150 words)</label>
-            <textarea class="form-textarea" id="reflection-text" name="reflection" placeholder="Describe your activity, the key question, and how you'd handle corporate-sponsored materials…" oninput="updateCount(this)"></textarea>
-            <div class="char-count" id="char-count">0 words</div>
-          </div>
-
-          <button type="submit" class="submit-btn" id="submit-btn">
-            Submit reflection →
-          </button>
-
-          <div class="submit-success" id="submit-success">
-            <p>
-              <strong>Submitted.</strong> Your reflection has been sent to Brightspace.
-              You’re ready for class this week – well done.
-            </p>
-          </div>
-        </form>
+        <p style="font-size:1rem; line-height:1.85; color:rgba(26,46,26,0.7); margin-bottom:0;">
+          Think this through on your own &mdash; then bring your ideas to <strong>Week 4's discussion forum on Brightspace</strong>. Your thinking here will anchor your participation in this week's class conversation.
+        </p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- CLOSING -->
+<!-- CLOSING HERO -->
 <section class="closing-hero reveal">
   <div class="block-inner">
-  <div class="closing-eyebrow">Module complete</div>
-  <h2 class="closing-title">Seeing Clearly Is the First Act of Resistance</h2>
-  <p class="closing-body">
-    You've spent time with some of the most sophisticated tactics used to delay genuine climate 
-    action. Vague language. Impressive pledges. Moral cover for extraction. The antidote isn't 
-    cynicism – it's the critical, curious thinking you'll model for your students. The habit of 
-    asking: <em>Who made this? What's left out? Who benefits? Who bears the cost?</em>
-  </p>
+    <div class="closing-hero-eyebrow">Module complete</div>
+    <h2 class="closing-hero-heading">Seeing Clearly Is the First Act of Resistance</h2>
+    <div class="closing-hero-body">
+      <p>
+        You've spent time with some of the most sophisticated tactics used to delay genuine climate
+        action. Vague language. Impressive pledges. Moral cover for extraction. The antidote isn't
+        cynicism &mdash; it's the critical, curious thinking you'll model for your students. The habit of
+        asking: <em>Who made this? What's left out? Who benefits? Who bears the cost?</em>
+      </p>
+    </div>
   </div>
 </section>
 
 <!-- TAKEAWAYS -->
-<div class="takeaways-block">
+<section class="takeaways-block">
   <div class="block-inner">
-    <div class="takeaways-card">
-      <div class="takeaways-header">
-        <div class="takeaways-label">Key takeaways from this module</div>
-      </div>
-      <div class="takeaways-grid">
+    <div class="takeaways-label">Key takeaways from this module</div>
     <div class="takeaway-item reveal">
-      <span class="takeaway-marker">01</span>
+      <span class="takeaway-num">01</span>
       <span class="takeaway-text"><strong>Greenwashing</strong> delays real action by creating the impression of progress without the substance.</span>
     </div>
     <div class="takeaway-item reveal" data-delay="1">
-      <span class="takeaway-marker">02</span>
+      <span class="takeaway-num">02</span>
       <span class="takeaway-text"><strong>Six core tactics:</strong> vague claims, hidden trade-offs, false labels, irrelevance, lesser-of-two-evils, and the net-zero mirage.</span>
     </div>
     <div class="takeaway-item reveal" data-delay="2">
-      <span class="takeaway-marker">03</span>
+      <span class="takeaway-num">03</span>
       <span class="takeaway-text"><strong>Carbon colonialism</strong> describes how climate "solutions" can repeat colonial patterns of extraction and burden-shifting onto the Global South.</span>
     </div>
     <div class="takeaway-item reveal" data-delay="3">
-      <span class="takeaway-marker">04</span>
-      <span class="takeaway-text"><strong>Critical media literacy</strong> – asking who made this, what's missing, and who benefits – is one of the most transferable tools you can give K-12 students.</span>
-    </div>
-      </div>
+      <span class="takeaway-num">04</span>
+      <span class="takeaway-text"><strong>Critical media literacy</strong> &mdash; asking who made this, what's missing, and who benefits &mdash; is one of the most transferable tools you can give K&ndash;12 students.</span>
     </div>
   </div>
-</div>
+</section>
 
 <script>
+  // Progress bar
   window.addEventListener('scroll', () => {
     const doc = document.documentElement;
-    const scrolled = doc.scrollTop / (doc.scrollHeight - doc.clientHeight);
-    const base = 0.8;
-    document.getElementById('progress-bar').style.transform = `scaleX(${base + scrolled * (1 - base)})`;
+    const max = doc.scrollHeight - doc.clientHeight;
+    const scrolled = max > 0 ? Math.min(doc.scrollTop / max, 1) : 1;
+    document.getElementById('progress-bar').style.transform = `scaleX(${scrolled})`;
   });
 
+  // Scroll reveal
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
   }, { threshold: 0.08 });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-  function updateCount(el) {
-    const words = el.value.trim().split(/\s+/).filter(w => w.length > 0).length;
-    const el2 = document.getElementById('char-count');
-    el2.textContent = words + ' word' + (words !== 1 ? 's' : '');
-    el2.style.color = words >= 150 ? 'var(--moss)' : 'var(--sage)';
-  }
+  // Sidebar toggle
+  const toggle = document.querySelector('.sidebar-toggle');
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.querySelector('.sidebar-overlay');
 
-  document.getElementById('reflection-form').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = document.getElementById('submit-btn');
-    const words = document.getElementById('reflection-text').value.trim().split(/\s+/).filter(w => w.length > 0).length;
-    if (words < 150) {
-      alert('Please write at least 150 words before submitting.');
-      return;
-    }
-    btn.disabled = true;
-    btn.textContent = 'SubmittingÃ¢â‚¬Â¦';
-    try {
-      const form = e.target;
-      const data = new FormData(form);
-      const res = await fetch(form.action, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
-      if (res.ok) {
-        document.getElementById('submit-success').classList.add('show');
-        btn.textContent = 'Submitted Ã¢Å“â€œ';
-      } else {
-        btn.disabled = false;
-        btn.textContent = 'Submit reflection Ã¢â€ â€™';
-        alert('There was a problem submitting. Please try again.');
-      }
-    } catch {
-      btn.disabled = false;
-      btn.textContent = 'Submit reflection Ã¢â€ â€™';
-      alert('Could not submit – please check your connection and try again.');
-    }
-  });
-
-  // Iframe-aware: when loaded inside combined.html shell
-  if (window.self !== window.top) {
-    const sidebar = document.querySelector('.sidebar');
-    if (sidebar) sidebar.style.display = 'none';
-    document.body.style.marginLeft = '0';
-    const pb = document.getElementById('progress-bar');
-    if (pb) pb.style.left = '0';
-    document.querySelectorAll('a[href]').forEach(link => {
-      const href = link.getAttribute('href');
-      if (href && !href.startsWith('http') && !href.startsWith('#') && !href.startsWith('mailto:')) {
-        link.addEventListener('click', (e) => {
-          e.preventDefault();
-          window.parent.postMessage({ navigate: href }, '*');
-        });
-      }
-    });
-  }
+  function openSidebar() { sidebar.classList.add('open'); overlay.classList.add('visible'); toggle.classList.add('open'); }
+  function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('visible'); toggle.classList.remove('open'); }
+  toggle.addEventListener('click', function () { sidebar.classList.contains('open') ? closeSidebar() : openSidebar(); });
+  overlay.addEventListener('click', closeSidebar);
 </script>
 </body>
 </html>
-
-
-
-
